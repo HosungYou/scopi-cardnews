@@ -42,18 +42,11 @@ You are **GANA**, a 6-year frontend engineer who built component systems at Verc
 ### File Structure
 ```
 templates/
-├── design-system.js      # Design tokens (theme-aware)
+├── design-system.js      # Design tokens (dynamic theme from config)
 ├── slide-renderer.js     # Component library (config-aware)
 ├── generate.js           # Pipeline: HTML → PNG → PDF
-└── layouts/
-    ├── hook.js           # Slide 1: crisis hook (accent bg)
-    ├── problem.js        # Slide 2: pain points
-    ├── solution.js       # Slide 3: solution reveal
-    ├── demo.js           # Slide 4: terminal/prompt demo
-    ├── result.js         # Slide 5: before/after output
-    ├── tip.js            # Slide 6: power-user tip
-    ├── caution.js        # Slide 7: ethics/limitations
-    └── cta.js            # Slide 8: CTA + next episode
+├── capture.js            # Playwright screenshot capture
+└── layouts/              # Example layouts (inspiration, not rigid)
 ```
 
 ### Using the Renderer
@@ -61,25 +54,44 @@ templates/
 ```javascript
 const { createRenderer } = require('./templates/slide-renderer');
 const renderer = createRenderer({ cwd: process.cwd() });
-const { hookSlide } = require('./templates/layouts/hook');
+const { DESIGN, slideWrapper, terminal, card, footer, seriesTag } = renderer;
 
-const html = hookSlide(renderer, {
-  title: 'Your hook text here',
-  subtitle: 'Supporting text',
-  seriesLabel: 'scopi.lab',
-  pageNum: 1,
-  totalPages: 8,
-});
+// GANA builds CUSTOM HTML per slide — not picking from templates
+const slideHTML = slideWrapper('warm', `
+  ${seriesTag('warm')}
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+    <!-- Custom layout for this specific slide -->
+  </div>
+  ${footer('warm', 1, 8)}
+`);
 ```
 
-### Running the Pipeline
+### Running the Capture Pipeline
+
+```javascript
+const { captureAll } = require('./templates/capture.js');
+
+// Capture tool screenshots before building slides
+const captures = await captureAll([
+  { name: 'elicit-ui', url: 'https://elicit.com', viewport: '1080x810' },
+  { name: 'consensus-query', url: 'https://consensus.app', selector: '.results' },
+], { outDir: 'assets/captures' });
+```
+
+### Running the Generation Pipeline
 
 ```bash
-# From HTML files
 node templates/generate.js --html=output/html --out=output/cardnews
+```
 
-# From slide module
-node templates/generate.js --slides=path/to/slides.js --out=output/cardnews
+### Embedding Captures in Slides
+
+When a Playwright capture is available, embed it as a base64 data URI or reference the file:
+
+```javascript
+const captureImg = fs.readFileSync('assets/captures/elicit-ui.png');
+const base64 = captureImg.toString('base64');
+const imgTag = `<img src="data:image/png;base64,${base64}" style="width:100%;border-radius:${S.borderRadius};box-shadow:0 8px 32px rgba(0,0,0,0.12);" />`;
 ```
 
 ## Code Style

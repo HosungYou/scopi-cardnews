@@ -6,11 +6,11 @@ user_invocable: true
 
 # /scopi:build — Capture + Generate
 
-You are running the Scopi build pipeline. This is a shortcut that takes existing HTML slides and runs the Puppeteer capture + PDF assembly pipeline.
+You are running the Scopi build pipeline. This takes existing HTML slides and runs the Puppeteer capture + PDF assembly pipeline. It can also run Playwright screenshot captures before building.
 
 ## Prerequisites
 
-Read `scopi.config.json` for dimensions and pipeline settings.
+Read `scopi.config.json` for dimensions, pipeline settings, and capture targets.
 
 ## Input
 
@@ -20,31 +20,48 @@ The user can specify:
 
 ## Flow
 
-### Step 1: Locate HTML Files
+### Step 1: Capture (Optional)
 
-Check the specified directory (or `output/html/`) for `.html` files. If none found, report the error.
+If `pipeline.capture` is true and capture targets exist (either in config or in `assets/captures/`):
 
-### Step 2: Run Pipeline
+Check if captures need to be refreshed. If `assets/captures/` is empty or user requests fresh captures:
+
+```javascript
+const { captureAll } = require('./templates/capture.js');
+const config = require('./scopi.config.json');
+
+const captures = await captureAll(
+  (config.identity.captureTargets || []).map(url => ({
+    name: url.replace(/https?:\/\//, '').replace(/[./]/g, '-'),
+    url: url,
+    viewport: `${config.dimensions.width}x${Math.round(config.dimensions.width * 0.75)}`
+  })),
+  { outDir: 'assets/captures' }
+);
+```
+
+### Step 2: Locate HTML Files
+
+Check the specified directory (or `output/html/`) for `.html` files. If none found, report the error and suggest running `/scopi:generate` first.
+
+### Step 3: Run Pipeline
 
 Execute the generation pipeline:
 
 ```bash
-node [plugin-path]/templates/generate.js --html=[html-dir] --out=[output-dir]
+node templates/generate.js --html=[html-dir] --out=[output-dir]
 ```
 
-Where:
-- `[plugin-path]` is the scopi-cardnews plugin installation path
-- `[html-dir]` is the HTML source directory
-- `[output-dir]` is `output/[dirname]` or user-specified
-
-### Step 3: Report
+### Step 4: Report
 
 ```
-🎉 Build Complete!
+Build Complete!
 
-📁 Output: [output-dir]/
-   📸 [N] PNG slides
-   📄 carousel.pdf
+Output: [output-dir]/
+  [N] PNG slides
+  carousel.pdf
+
+Captures: [N] screenshots (if any)
 
 Open [output-dir]/ to preview.
 ```
@@ -55,3 +72,4 @@ Open [output-dir]/ to preview.
 - `--format=png` — Skip PDF generation
 - `--format=pdf` — Skip PNG output (PDF only)
 - `--width=N --height=N` — Override dimensions
+- `--capture` — Force fresh screenshot captures before building

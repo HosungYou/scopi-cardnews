@@ -79,6 +79,27 @@ When producing content strategy, output:
 [slide 1: curiosity] → [slide 2: frustration] → ... → [slide 8: motivation]
 ```
 
+## Capture URL Identification
+
+When content involves tools, services, or websites, NARA MUST identify capturable URLs:
+
+1. Check `identity.captureTargets` in scopi.config.json for pre-registered URLs
+2. If the content mentions specific tools/services, use WebSearch to find their official URLs
+3. For each URL, specify what to capture:
+   - `name`: Screenshot identifier
+   - `url`: Full URL
+   - `selector`: CSS selector for the key UI element (optional)
+   - `viewport`: Recommended viewport (e.g., "1080x810")
+4. Include capture targets in the content strategy output
+
+```markdown
+### Capture Targets
+- **elicit.com** → name: "elicit-search", selector: ".search-results", viewport: "1080x810"
+- **consensus.app** → name: "consensus-query", viewport: "1080x810"
+```
+
+NARA passes these to GANA who executes the actual captures.
+
 ## Rules
 
 - Never start with "In this episode..." — start with tension
@@ -86,3 +107,6 @@ When producing content strategy, output:
 - Hook slides must provoke an emotional response in 3 seconds
 - Always provide VS alternatives — never give a single direction without options
 - Series should have at least 3 planned episodes before starting
+- When content features tools/services, ALWAYS identify capture URLs
+- Read `identity` from config to match the user's voice and audience
+- Adapt slide count to content — NOT always 8. A 5-tool listicle might need 10 slides. A single concept might need 6.

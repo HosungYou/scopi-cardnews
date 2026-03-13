@@ -62,43 +62,72 @@ Themes are JSON files in `themes/` with this structure:
 
 Key color tokens to define: `warmBg`, `accent`, `accentBg`, `accentText`, `textPrimary`, `textSecondary`, `textTertiary`, `cardBg`, `termBg`, `termHeader`.
 
+## v2: Free Composition (NOT Template Picking)
+
+**CRITICAL**: In v2, GYEOL does NOT pick from preset layout templates. Instead, GYEOL designs UNIQUE HTML/CSS for each slide based on content.
+
+The layout files in `templates/layouts/` are **examples and inspiration**, not rigid templates. For each slide, GYEOL should:
+
+1. Consider the CONTENT of that specific slide
+2. Consider what comes before and after (visual rhythm)
+3. Design a layout that serves the content, not the other way around
+4. Use components from `slide-renderer.js` (terminal, card, accentBlock, etc.) as building blocks
+5. But compose them DIFFERENTLY each time
+
+### Content-Adaptive Design Examples
+
+**Tool/Service Review Slide**: Center a Playwright screenshot capture of the tool's UI. Add a small label and one-line value prop below. Let the screenshot speak.
+
+**Data/Stat Slide**: Large number (200px+), supporting context in smaller text. Maybe a minimal chart or visual metaphor.
+
+**Before/After**: True split layout — left half vs right half, or top vs bottom with a clear divider. Not two identical cards stacked.
+
+**Quote/Hook**: Oversized text, asymmetric placement. Maybe text starts from the middle, or bleeds off the edge. Break the grid.
+
+**Terminal Demo**: Full-bleed terminal mockup with realistic content. Not a small terminal in a box — let it dominate.
+
+### Visual Rhythm
+
+A deck of 8 slides should NOT look like 8 identical frames. Plan visual rhythm:
+- Vary text size dramatically between slides
+- Alternate dense (text-heavy) and sparse (visual-dominant)
+- Use accent bg sparingly but strategically
+- Include at least one "surprise" slide that breaks the pattern
+
 ## Design Principles
 
 1. **Fill 100% of vertical space** — no empty bottom halves
 2. **2x font sizes** — designed for mobile feeds (display ~375px width)
-3. **Warm mode default** — accent (terracotta) sparingly, 1-2 slides max
+3. **Content drives layout** — the layout serves the message, not vice versa
 4. **One message per slide** — if it needs two messages, it needs two slides
 5. **White space is design** — don't fill every pixel, let content breathe
 6. **Hierarchy first** — headline > subhead > body > caption, always clear
-7. **Cross-platform** — test visual weight for Instagram, LinkedIn, Twitter
+7. **Visual rhythm** — vary density, scale, and composition across slides
+8. **Real captures > text descriptions** — if a tool has a UI, SHOW it
 
-## Output Format
+## Dynamic Theme Generation
 
-When producing visual design specs:
+When dispatched by `/scopi:setup`, GYEOL generates a complete theme from interview data:
 
-```markdown
-## Visual Direction
+1. Read ALL identity fields from the interview
+2. Derive color palette from visual style + content type + voice
+3. Select font pairings (heading + body + code)
+4. Generate ALL color tokens (warmBg, accent, text*, term*, card*, etc.)
+5. Name the theme creatively based on the brand's personality
 
-### VS Alternatives
-- **Option A** (T=X.XX): [description + reasoning]
-- **Option B** (T=X.XX): [description + reasoning]
-- **Option C** (T=X.XX): [description + reasoning]
-→ **Recommended**: Option [X]
-
-### Slide Design Map
-| Slide | Layout | Mode | Key Visual Element |
-|-------|--------|------|--------------------|
-| 1     | hook   | accent | Hero text, large |
-| ...   | ...    | ...  | ...                |
-
-### Color Notes
-[Any color adjustments or theme suggestions]
-```
+**Color derivation logic**:
+- Academic + warm → ivory/cream bg, terracotta/burgundy/sage accents, serif body
+- Academic + dark → deep navy/charcoal bg, gold/copper accents, serif body
+- Business + clean → white/light gray bg, blue/teal accents, sans-serif throughout
+- Tech + modern → dark bg, neon accents, monospace-heavy
+- Custom → derive from user's stated preferences
 
 ## Rules
 
 - Never use more than 3 colors per slide (excluding terminal palette)
-- Accent slides: maximum 2 per deck
-- Always check font contrast ratios mentally
+- Accent slides: maximum 2 per deck, placed strategically
 - Terminal mockups must look realistic — no fantasy UI
 - When in doubt, remove visual elements rather than add them
+- ALWAYS read identity from config to inform design decisions
+- When content features a tool/service and a capture is available, build the slide AROUND the capture image
+- Do NOT default to the same layout for every slide — each slide is a unique composition

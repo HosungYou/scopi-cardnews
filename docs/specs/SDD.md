@@ -1,7 +1,7 @@
 # Software Design Document (SDD)
 
 **Product**: Scopi Cardnews
-**Version**: 1.0.0
+**Version**: 2.0.0
 **Author**: Hosung You
 **Date**: 2026-03-12
 **Status**: Released
@@ -13,21 +13,24 @@
 ### 1.1 Core Principles
 
 1. **Config-driven, not code-driven**: Users customize via JSON, not JavaScript
-2. **Theme-aware tokens**: No hardcoded colors/fonts anywhere in rendering code
-3. **Agent separation of concerns**: Each agent has a single, clear responsibility
-4. **Read-only safety net**: Review agents (JURI, MARU) cannot modify files
-5. **Graceful degradation**: Missing config/theme/fonts → defaults, not crashes
-6. **Inline everything**: Puppeteer renders snapshots — no external CSS runtime
+2. **Dynamic theme-aware tokens**: Themes generated from identity, not picked from presets
+3. **Free composition**: Every slide is a unique design — no template picking
+4. **Identity-aware**: All agent decisions informed by brand identity (voice, audience, visual style)
+5. **Capture-first**: Real screenshots of tools/services over text descriptions
+6. **Read-only safety net**: Review agents (JURI, MARU) cannot modify files
+7. **Graceful degradation**: Missing config/theme/fonts/captures → defaults, not crashes
+8. **Inline everything**: Puppeteer renders snapshots — no external CSS runtime
 
 ### 1.2 Design Decisions
 
 | Decision | Rationale |
 |----------|-----------|
-| Inline CSS over external stylesheets | Puppeteer renders a snapshot, external CSS is unreliable across environments |
-| Factory pattern for renderer | Each `createRenderer()` call binds to current config, enabling per-project customization |
-| JSON themes over CSS variables | JSON is easier to create/edit for non-developers, parseable by agents |
-| 7 agents over 1 monolithic prompt | Separation enables skip/swap of individual phases, clearer responsibility |
-| SKILL.md over code-based commands | Prompt-based skills are portable, editable, and don't require compilation |
+| Dynamic themes over presets | Users get a unique brand identity, not a generic template |
+| Free composition over layout templates | Every slide serves its content, not the other way around |
+| Playwright capture integration | Real screenshots are more authentic than text descriptions |
+| Inline theme in config | Simpler architecture — one file, no theme file lookups |
+| Identity interview over simple form | Deeper understanding of user's brand enables better output |
+| Adaptive slide count | Content drives structure — a 5-tool listicle needs 10 slides, a concept needs 6 |
 | CommonJS over ESM | Puppeteer and Node.js compat without configuration complexity |
 
 ---
@@ -41,34 +44,34 @@
 │  Layer 1: User Interface (Skills)           │
 │  ─────────────────────────────────────────  │
 │  9 SKILL.md files define slash commands.     │
-│  Each skill is a prompt template that        │
-│  orchestrates agents and tools.              │
-│  Skills are the ONLY user-facing interface.  │
+│  Skills orchestrate agents and tools.        │
+│  Skills are identity-aware (read config).    │
 └──────────────────┬──────────────────────────┘
                    │ dispatches
 ┌──────────────────▼──────────────────────────┐
 │  Layer 2: Intelligence (Agents)             │
 │  ─────────────────────────────────────────  │
-│  7 agent personas define behavior,           │
-│  tool permissions, and output format.        │
-│  Agents are dispatched by skills.            │
-│  JURI + MARU are read-only.                  │
+│  7 agent personas with identity awareness.   │
+│  NARA: content + capture URL identification  │
+│  GYEOL: free composition + dynamic themes    │
+│  GANA: capture pipeline + HTML generation    │
+│  JURI + MARU: read-only review               │
 └──────────────────┬──────────────────────────┘
                    │ uses
 ┌──────────────────▼──────────────────────────┐
-│  Layer 3: Engine (Templates)                │
+│  Layer 3: Engine (Templates + Capture)      │
 │  ─────────────────────────────────────────  │
-│  design-system.js: Token resolution          │
+│  design-system.js: Dynamic token resolution  │
 │  slide-renderer.js: Component factory        │
-│  layouts/*.js: Slide templates               │
+│  capture.js: Playwright screenshot pipeline  │
+│  layouts/*.js: Example layouts (inspiration) │
 │  generate.js: Rendering pipeline             │
 └──────────────────┬──────────────────────────┘
                    │ reads
 ┌──────────────────▼──────────────────────────┐
-│  Layer 4: Data (Config + Themes)            │
+│  Layer 4: Data (Config)                     │
 │  ─────────────────────────────────────────  │
-│  scopi.config.json: Per-project config       │
-│  themes/*.json: Visual presets               │
+│  scopi.config.json: Inline theme + identity  │
 │  DEFAULTS: Built-in fallbacks                │
 └─────────────────────────────────────────────┘
 ```
@@ -84,257 +87,139 @@ Dependencies flow **downward only**:
 
 ## 3. Design System Architecture
 
-### 3.1 Token Resolution
+### 3.1 Token Resolution (v2)
 
 ```
 DEFAULTS (hardcoded)
     │
     ▼ override by
-Theme JSON (themes/*.json)
+Config theme (config.theme.colors/fonts — inline)
     │
     ▼ override by
-User Config (scopi.config.json)
+Config brand (config.brand)
+Config dimensions (config.dimensions)
     │
     ▼ produces
 DESIGN object (runtime)
     │
+    ├── colors, fonts, fontSize, spacing, brand
+    ├── identity (from config.identity)
+    └── language (from config.language)
+    │
     ▼ consumed by
-Renderer components
+Renderer components + Agent decisions
 ```
 
-### 3.2 Token Categories
+### 3.2 Dynamic Theme Generation (New in v2)
+
+During `/scopi:setup`, GYEOL generates a theme from interview data:
 
 ```
-DESIGN
-├── width: number              ← config.dimensions.width || 1080
-├── height: number             ← config.dimensions.height || 1350
-├── colors: {                  ← DEFAULTS.colors ← theme.colors
-│   ├── warmBg
-│   ├── accent
-│   ├── accentBg
-│   ├── accentText
-│   ├── textPrimary
-│   ├── textSecondary
-│   ├── textTertiary
-│   ├── cardBg
-│   ├── term* (8 tokens)
-│   └── ... (28 total)
-│   }
-├── fonts: {                   ← DEFAULTS.fonts ← theme.fonts
-│   ├── heading
-│   ├── body
-│   └── code
-│   }
-├── fontSize: { ... }          ← DEFAULTS.fontSize (not overridable by theme)
-├── spacing: { ... }           ← DEFAULTS.spacing (not overridable by theme)
-└── brand: {                   ← DEFAULTS.brand ← config.brand
-    ├── name
-    ├── tag
-    ├── author
-    └── tagline
-    }
+identity.contentType  ─┐
+identity.visualStyle  ─┤
+identity.voice        ─┼──→ GYEOL ──→ theme object (colors + fonts)
+identity.priority     ─┤
+brand.name            ─┘
 ```
 
-### 3.3 Component Composition
-
-```
-slideWrapper(mode, content)
-│
-├── <html><head>
-│   ├── Google Fonts <link>
-│   └── <style> baseCSS (reset + body sizing)
-│
-└── <body>
-    └── .slide-root (flex column, full dimensions, padded)
-        │
-        ├── seriesTag(mode)           ← top badge
-        │   ├── compositeIcon(40)     ← 🎓+🧭
-        │   └── brand.tag text
-        │
-        ├── [content area]            ← layout-specific
-        │   ├── terminal(...)         ← code/CLI mockups
-        │   ├── accentBlock(...)      ← highlighted boxes
-        │   ├── card(...)             ← elevated cards
-        │   ├── numberBadge(...)      ← step indicators
-        │   └── foxMascot(...)        ← brand mascot
-        │
-        └── footer(mode, page, total) ← bottom bar
-            ├── compositeIcon(48)
-            ├── brand.author text
-            └── page dots (active/inactive)
-```
+Color derivation logic:
+- Academic + warm → ivory/cream bg, terracotta/burgundy accents, serif body
+- Academic + dark → deep navy/charcoal bg, gold/copper accents, serif body
+- Business + clean → white/light gray bg, blue/teal accents, sans-serif
+- Tech + modern → dark bg, neon accents, monospace-heavy
 
 ---
 
-## 4. Agent Design
+## 4. Free Composition Design (New in v2)
 
-### 4.1 Agent Persona Pattern
+### 4.1 Philosophy
 
-Each agent `.md` follows a consistent structure:
+In v1, agents picked from 8 preset layout templates. In v2, GYEOL designs a **unique composition** for each slide based on its content.
+
+### 4.2 Content-Adaptive Patterns
+
+| Content | Composition Approach |
+|---------|---------------------|
+| Tool/service with capture | Screenshot centered, minimal text |
+| Data/statistics | Oversized number (200px+), supporting context |
+| Before/after comparison | True split layout |
+| Quote/hook | Oversized text, asymmetric placement |
+| Terminal/CLI demo | Full-bleed terminal mockup |
+
+### 4.3 Visual Rhythm
+
+A deck should NOT be 8 identical frames. GYEOL plans:
+- Dramatic text size variation between slides
+- Alternating dense (text-heavy) and sparse (visual-dominant) slides
+- Accent bg used sparingly (max 2 per deck)
+- At least one "surprise" slide that breaks the pattern
+
+### 4.4 Layout Examples as Inspiration
+
+The 8 layout files in `templates/layouts/` serve as **examples and building blocks**:
+- Agents can reference them for structural ideas
+- But NEVER call them as rigid templates
+- Each slide gets custom HTML written by GANA
+
+---
+
+## 5. Capture Pipeline Design (New in v2)
+
+### 5.1 Architecture
 
 ```
-Frontmatter (YAML)
-├── name: Unique identifier
-├── description: One-line role summary
-├── model: sonnet (all agents use same model)
-└── tools: [allowed tool list]
-
-Body (Markdown)
-├── Identity: Character name, meaning, personality
-├── Background: Professional history (years, companies, expertise)
-├── Responsibilities: Numbered task list
-├── VS Methodology: (if applicable) How VS is applied
-├── Output Format: Expected response structure
-└── Rules: Behavioral constraints
+NARA identifies URLs    GANA runs capture       GYEOL designs around
+(content strategy)  →   (Playwright/Puppeteer)  →  captures
+                              │
+                              ▼
+                        assets/captures/*.png
+                              │
+                              ▼
+                        base64 data URI → embedded in HTML slide
 ```
 
-### 4.2 Agent Tool Permissions
+### 5.2 Browser Strategy
 
 ```
-        Read  Glob  Grep  Write  Edit  Bash  WebSearch
-NARA     ✓     ✓     ✓     ✓      ✓          ✓
-GYEOL    ✓     ✓     ✓     ✓      ✓
-GANA     ✓     ✓     ✓     ✓      ✓     ✓
-DARI     ✓     ✓     ✓     ✓                  ✓
-BINNA    ✓     ✓     ✓            ✓
-JURI     ✓     ✓     ✓                              ← READ-ONLY
-MARU     ✓     ✓     ✓                              ← READ-ONLY
+try Playwright (preferred — better screenshot quality)
+catch → fall back to Puppeteer
+catch → skip capture, warn user
 ```
 
-### 4.3 Pipeline Orchestration
+### 5.3 Capture Target Flow
+
+1. Pre-registered in `identity.captureTargets` (setup interview)
+2. Dynamically identified by NARA via WebSearch
+3. Captured by GANA during generation Phase 4
+4. Embedded by GANA as base64 during HTML generation
+
+---
+
+## 6. Agent Design
+
+### 6.1 Agent Persona Pattern
+
+Same as v1, plus:
+- All agents read `identity` from config
+- NARA has `WebSearch` for capture URL discovery
+- GANA has `Bash` for capture pipeline execution
+- GYEOL does free composition, not template selection
+
+### 6.2 Pipeline Orchestration (v2)
 
 ```
 /scopi:generate orchestration:
 
-  NARA ──→ [user decision] ──→ BINNA ──→ GYEOL ──→ GANA ──→ JURI ──→ MARU
-  (content)  (direction)      (copy)    (design)  (build)  (ethics) (empathy)
-
-  Sequential execution. Each phase receives output context from previous phases.
-  Inactive agents are skipped. GANA is required (minimum viable pipeline).
+  NARA ──→ [user] ──→ BINNA ──→ GANA(capture) ──→ GYEOL+GANA ──→ JURI ──→ MARU
+  (content   (pick)   (copy)    (screenshots)     (design+HTML)  (ethics) (empathy)
+  +captures)                                       (→ PNG → PDF)
 ```
-
----
-
-## 5. VS (Verbalized Sampling) Design
-
-### 5.1 Integration Points
-
-| Point | Agent | What is sampled | T-Score range |
-|-------|-------|----------------|---------------|
-| Content Direction | NARA | Topic angle, narrative format | 0.25 - 0.90 |
-| Visual Design | GYEOL | Layout style, color emphasis, typography | 0.25 - 0.80 |
-| Layout Structure | GANA | Slide composition, element placement | 0.25 - 0.75 |
-
-### 5.2 T-Score Algorithm
-
-T-Score is a subjective typicality estimate:
-- Agent generates 3 alternatives
-- Each alternative is scored 0.0 (completely novel) to 1.0 (completely expected)
-- Scoring is based on the agent's domain expertise
-- Default recommendation: lowest T-Score that maintains clarity
-
-### 5.3 Anti-Drift Mechanism
-
-T-Scores are tracked across episodes. If average T-Score rises above 0.60 for 3 consecutive episodes, NARA flags creative drift and pushes for lower T-Score options.
-
----
-
-## 6. Theme System Design
-
-### 6.1 Theme File Contract
-
-```json
-{
-  "name": "string (display name)",
-  "description": "string (one-line)",
-  "colors": {
-    // Any subset of DEFAULTS.colors
-    // Only specified keys override defaults
-  },
-  "fonts": {
-    // Any subset of DEFAULTS.fonts
-    // Only specified keys override defaults
-  }
-}
-```
-
-### 6.2 Theme Loading Strategy
-
-```javascript
-function createDesignSystem(opts) {
-  const config = loadConfig(cwd);           // Step 1: Load user config
-  const theme = loadTheme(config.theme);     // Step 2: Load theme JSON
-  return {
-    colors: { ...DEFAULTS.colors, ...theme.colors },  // Step 3: Merge
-    fonts: { ...DEFAULTS.fonts, ...theme.fonts },
-    brand: { ...DEFAULTS.brand, ...config.brand },
-    width: config.dimensions?.width || DEFAULTS.width,
-    height: config.dimensions?.height || DEFAULTS.height,
-    fontSize: DEFAULTS.fontSize,   // Not overridable by theme (intentional)
-    spacing: DEFAULTS.spacing,     // Not overridable by theme (intentional)
-  };
-}
-```
-
-**Design decision**: `fontSize` and `spacing` are NOT overridable by themes. These are carefully calibrated for mobile feed readability at 2x scale. Allowing theme-level overrides would risk breaking the visual hierarchy.
 
 ---
 
 ## 7. Rendering Pipeline Design
 
-### 7.1 Puppeteer Configuration
-
-```javascript
-{
-  headless: 'new',                           // New headless mode
-  args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  viewport: {
-    width: DESIGN.width,                     // From config
-    height: DESIGN.height,                   // From config
-    deviceScaleFactor: retina ? 2 : 1,       // 2x for retina
-  }
-}
-```
-
-### 7.2 Font Loading Strategy
-
-```
-1. setContent(html, {waitUntil: 'domcontentloaded'})
-   └── Does NOT wait for fonts (would timeout on slow networks)
-
-2. Promise.race([
-     page.evaluateHandle('document.fonts.ready'),  ← Wait for fonts
-     setTimeout(5000)                               ← Or give up after 5s
-   ])
-
-3. setTimeout(800)  ← Extra settle time for layout recalculation
-```
-
-### 7.3 Screenshot Configuration
-
-```javascript
-{
-  type: 'png',
-  clip: {
-    x: 0, y: 0,
-    width: DESIGN.width,
-    height: DESIGN.height,
-  }
-}
-```
-
-Clip is explicit to ensure exact dimensions regardless of viewport overflow.
-
-### 7.4 PDF Assembly
-
-```javascript
-// pdf-lib: one PNG per page, sized to slide dimensions
-for (const pngPath of pngPaths) {
-  const pngImage = await pdfDoc.embedPng(pngBytes);
-  const page = pdfDoc.addPage([width, height]);
-  page.drawImage(pngImage, { x: 0, y: 0, width, height });
-}
-```
+Same as v1 (Puppeteer, 2x retina, 5s font timeout, 800ms settle, pdf-lib assembly).
 
 ---
 
@@ -344,35 +229,10 @@ for (const pngPath of pngPaths) {
 
 | Extension | Mechanism | Location |
 |-----------|-----------|----------|
-| Custom theme | Add JSON file | `themes/` |
-| Custom agent | Add MD file + config entry | `agents/` + `scopi.config.json` |
-| Custom layout | Add JS module | `templates/layouts/` |
+| Custom agent | Add MD file + config entry | `agents/` |
+| Layout inspiration | Add JS module | `templates/layouts/` |
+| Theme customization | `/scopi:theme customize` | `scopi.config.json` |
+| Theme regeneration | `/scopi:theme regenerate` | `scopi.config.json` |
 | Custom series | Config entry | `scopi.config.json` |
 | Post-generation hook | Shell script | `hooks/post-generate.sh` |
-
-### 8.2 Layout Module Contract
-
-```javascript
-// Every layout module MUST export a function with this signature:
-function layoutName(renderer, data) {
-  // renderer: createRenderer() instance (has DESIGN, all components)
-  // data: slide-specific props (title, content, pageNum, totalPages)
-  // MUST return: complete HTML5 document string (via slideWrapper)
-}
-```
-
-### 8.3 Agent MD Contract
-
-```yaml
----
-name: AGENT_NAME          # Required: unique identifier
-description: string       # Required: one-line summary
-model: sonnet             # Required: model to use
-tools:                    # Required: allowed tool list
-  - Read
-  - Glob
-  - Grep
-  # Optional: Write, Edit, Bash, WebSearch
----
-# Markdown body with persona definition
-```
+| Capture targets | Config entry or NARA discovery | `identity.captureTargets` |

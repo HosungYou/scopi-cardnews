@@ -10,7 +10,9 @@ You are running the Scopi quality review. This dispatches JURI (Ethics Inspector
 
 ## Prerequisites
 
-There must be generated content to review — either HTML files in `output/html/` or a slide module.
+There must be generated content to review — either HTML files in `output/html/` or a recent output directory.
+
+Read `scopi.config.json` for `identity` (audience, content type) to inform the review perspective.
 
 ## Input
 
@@ -29,8 +31,8 @@ Find the most recent output directory, or use the user-specified path. Read all 
 Dispatch the JURI agent to review all slides. JURI will:
 1. Read each slide's HTML content
 2. Check against the ethics review checklist
-3. Produce a severity-rated report (🔴 MUST FIX / 🟡 SHOULD FIX / 🟢 CONSIDER)
-4. Issue a verdict (APPROVED / CONDITIONAL / REJECTED)
+3. Consider `identity.contentType` for review strictness (academic = stricter)
+4. Produce a severity-rated report
 
 Display JURI's full report.
 
@@ -38,37 +40,36 @@ Display JURI's full report.
 
 Dispatch the MARU agent to test all slides. MARU will:
 1. Read each slide's content
-2. Score each slide on 5 empathy metrics (1-5)
-3. Test against 4 audience personas
-4. Predict engagement rates
-5. Identify the strongest and weakest slides
+2. Build audience personas from `identity.audience` and `identity.audiencePainPoints`
+3. Score each slide on 5 empathy metrics (1-5)
+4. Predict engagement and identify weak points
 
 Display MARU's full report.
 
 ### Step 4: Summary
 
 ```
-📊 Quality Review Complete
+Quality Review Complete
 
-🔍 Ethics (JURI):
-   Verdict: [APPROVED/CONDITIONAL/REJECTED]
-   🔴 Must Fix: [count]
-   🟡 Should Fix: [count]
-   🟢 Consider: [count]
+Ethics (JURI):
+  Verdict: [APPROVED/CONDITIONAL/REJECTED]
+  Must Fix: [count]
+  Should Fix: [count]
+  Consider: [count]
 
-💬 Empathy (MARU):
-   Overall: [X.X/5.0]
-   Best slide: #[N] — [reason]
-   Weakest: #[N] — [reason]
-   Engagement: [save rate] saves, [share rate] shares
+Empathy (MARU):
+  Overall: [X.X/5.0]
+  Best slide: #[N] — [reason]
+  Weakest: #[N] — [reason]
+  Engagement: [save rate] saves, [share rate] shares
 
-🔧 Next steps:
-   [If issues found] Fix the flagged items and re-run /scopi:review
-   [If clean] Ready to publish! Run /scopi:caption for social media copy
+Next steps:
+  [If issues found] Fix the flagged items and re-run /scopi:review
+  [If clean] Ready to publish! Run /scopi:caption for social media copy
 ```
 
 ## Important
 
 - JURI and MARU are READ-ONLY agents — they cannot modify files
 - Their reports are advisory — the user decides whether to act on suggestions
-- If JURI flags 🔴 MUST FIX items, strongly recommend addressing them before publishing
+- If JURI flags MUST FIX items, strongly recommend addressing them before publishing

@@ -2,7 +2,7 @@
 
 Scopi Card News uses 7 expert agents, each with deep professional backgrounds that shape output quality.
 
-> **Note**: Agent personas are loaded from `agents/*.md` files in the plugin directory. To customize agents, see [Adding Custom Agents](#adding-custom-agents) below.
+> **Note**: Agent personas are loaded from `agents/*.md` files in the plugin directory.
 
 ## Agent Overview
 
@@ -24,9 +24,11 @@ Scopi Card News uses 7 expert agents, each with deep professional backgrounds th
 
 **What NARA does**:
 - Generates content ideas with VS (Verbalized Sampling) alternatives
-- Designs 8-slide narrative arcs with emotional curves
+- Designs narrative arcs with adaptive slide count (not always 8)
 - Writes hooks that stop the scroll
+- **Identifies capture URLs** — checks `identity.captureTargets` and uses WebSearch to find URLs for tools/services
 - Plans multi-episode content series
+- Reads `identity` from config to match audience and voice
 
 **When NARA is dispatched**: `/scopi:content`, `/scopi:generate` (Phase 1)
 
@@ -37,12 +39,13 @@ Scopi Card News uses 7 expert agents, each with deep professional backgrounds th
 **Background**: 8-year visual designer. Apple Design Team intern → Figma design systems → independent brand consultant. Typography, color systems, layout grids.
 
 **What GYEOL does**:
-- Defines design systems (color tokens, typography, spacing)
-- Creates and manages theme JSON files
-- Selects layout templates per slide
+- **Free composition** — designs unique HTML/CSS for each slide based on content (NOT template picking)
 - Generates VS visual direction alternatives
+- Creates dynamic themes from brand identity interview data
+- Plans visual rhythm across decks (varying density, scale, composition)
+- Content-adaptive design (tool screenshots centered, data slides with oversized numbers, etc.)
 
-**When GYEOL is dispatched**: `/scopi:design`, `/scopi:generate` (Phase 4), `/scopi:theme`
+**When GYEOL is dispatched**: `/scopi:design`, `/scopi:generate` (Phase 5), `/scopi:theme`, `/scopi:setup` (Step 10)
 
 ---
 
@@ -51,12 +54,13 @@ Scopi Card News uses 7 expert agents, each with deep professional backgrounds th
 **Background**: 6-year frontend engineer. Vercel → Framer. HTML/CSS component architecture, Puppeteer rendering pipelines.
 
 **What GANA does**:
-- Codes HTML slides using layout components
-- Manages the component library (`slide-renderer.js`)
+- Codes custom HTML slides using components from `slide-renderer.js`
+- Runs the **Playwright capture pipeline** for real screenshots of tools/services
+- Embeds captures as base64 data URIs in slides
 - Runs the Puppeteer HTML → PNG → PDF pipeline
 - Generates VS layout variations for key slides
 
-**When GANA is dispatched**: `/scopi:generate` (Phase 5), `/scopi:build`
+**When GANA is dispatched**: `/scopi:generate` (Phases 4-5), `/scopi:build`
 
 ---
 
@@ -69,6 +73,7 @@ Scopi Card News uses 7 expert agents, each with deep professional backgrounds th
 - Researches and selects tiered hashtags
 - Recommends posting schedules
 - Plans cross-platform promotion strategy
+- Reads `identity.audience` and `identity.voice` to match tone
 
 **When DARI is dispatched**: `/scopi:caption`
 
@@ -80,9 +85,10 @@ Scopi Card News uses 7 expert agents, each with deep professional backgrounds th
 
 **What BINNA does**:
 - Edits slide copy for clarity and impact
-- Calibrates tone per audience
+- Calibrates tone per `identity.voice`
 - Optimizes CTAs
 - Ensures bilingual copy feels native, not translated
+- Matches `language` setting from config
 
 **When BINNA is dispatched**: `/scopi:generate` (Phase 3), `/scopi:caption`
 
@@ -94,7 +100,8 @@ Scopi Card News uses 7 expert agents, each with deep professional backgrounds th
 
 **What JURI does**:
 - Reviews content for ethical issues, copyright, academic integrity
-- Produces severity-rated reports (🔴 MUST FIX / 🟡 SHOULD FIX / 🟢 CONSIDER)
+- Considers `identity.contentType` for review strictness (academic = stricter)
+- Produces severity-rated reports (MUST FIX / SHOULD FIX / CONSIDER)
 - Issues verdicts (APPROVED / CONDITIONAL / REJECTED)
 
 **Constraint**: JURI cannot modify files. Reports only.
@@ -108,7 +115,7 @@ Scopi Card News uses 7 expert agents, each with deep professional backgrounds th
 **Background**: UX researcher. 500+ user interviews. Emotional reaction prediction, empathy point analysis, accessibility review.
 
 **What MARU does**:
-- Predicts audience reactions per persona
+- Builds audience personas from `identity.audience` and `identity.audiencePainPoints`
 - Scores slides on empathy metrics (scroll-stop, clarity, relatability, actionability, shareability)
 - Identifies strongest and weakest slides
 - Predicts engagement rates
@@ -119,7 +126,7 @@ Scopi Card News uses 7 expert agents, each with deep professional backgrounds th
 
 ## Adding Custom Agents
 
-Create a new `.md` file in the `agents/` directory following this structure:
+Create a new `.md` file in the `agents/` directory:
 
 ```markdown
 ---
@@ -152,25 +159,16 @@ tools:
 [behavioral constraints]
 ```
 
-Then add the agent to `scopi.config.json` under `agents.custom` and re-run `/scopi:setup` to register it.
+Add the agent to `scopi.config.json` under `agents.custom`.
 
-### Where to Place Custom Agent Files
-
-- **Marketplace install**: Place custom agents in the plugin cache directory:
-  `~/.claude/plugins/marketplaces/HosungYou-scopi-cardnews/agents/`
-- **Local install**: Place in the cloned repository's `agents/` directory.
-- **Project-level**: You can also place agent files in your project's `agents/` directory and reference them in `scopi.config.json` under `agents.custom`.
-
-### Agent Dispatch Flow
+## Agent Dispatch Flow
 
 ```
 /scopi:generate
-  → Phase 1: NARA dispatched (if active)
-  → Phase 3: BINNA dispatched (if active)
-  → Phase 4: GYEOL dispatched (if active)
-  → Phase 5: GANA dispatched (always required)
-  → Phase 6: JURI dispatched (if active, read-only)
-  → Phase 7: MARU dispatched (if active, read-only)
+  → Phase 1: NARA — content strategy + capture URL identification
+  → Phase 3: BINNA — copy refinement + tone calibration
+  → Phase 4: GANA — Playwright screenshot capture
+  → Phase 5: GYEOL + GANA — free composition design + HTML generation → PNG → PDF
+  → Phase 6: JURI — ethics review (read-only)
+  → Phase 7: MARU — empathy test (read-only)
 ```
-
-Custom agents can be wired into the pipeline by creating a custom skill that references them.

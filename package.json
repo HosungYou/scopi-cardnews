@@ -1,10 +1,11 @@
 {
   "name": "scopi-cardnews",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Professional card news generator plugin for Claude Code",
   "main": "templates/generate.js",
   "scripts": {
     "generate": "node templates/generate.js",
+    "capture": "node templates/capture.js",
     "postinstall": "echo '🦊 scopi-cardnews installed. Run /scopi:setup to configure your brand.'"
   },
   "repository": {
@@ -28,6 +29,9 @@
   "dependencies": {
     "pdf-lib": "^1.17.1",
     "puppeteer": "^24.39.0"
+  },
+  "optionalDependencies": {
+    "playwright": "^1.58.0"
   },
   "bugs": {
     "url": "https://github.com/HosungYou/scopi-cardnews/issues"

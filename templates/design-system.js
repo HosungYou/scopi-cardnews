@@ -1,14 +1,13 @@
 /**
- * Scopi Card News Design System — Theme-Aware Engine
- * Loads theme from scopi.config.json or falls back to built-in defaults.
- * Warm-only mode with terracotta accent blocks.
- * 2x font sizes for mobile feed impact.
+ * Scopi Card News Design System v2 — Dynamic Theme Engine
+ * Themes are generated at setup time, not loaded from presets.
+ * Config carries the full theme inline.
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// Default design tokens (warm-scholar theme baked in)
+// Fallback design tokens (used when no config exists)
 const DEFAULTS = {
   width: 1080,
   height: 1350,
@@ -88,26 +87,7 @@ const DEFAULTS = {
 };
 
 /**
- * Load theme JSON from themes/ directory
- * @param {string} themeName - Theme file name (without .json)
- * @param {string} pluginRoot - Root directory of the plugin
- * @returns {object} Theme color/font overrides
- */
-function loadTheme(themeName, pluginRoot) {
-  if (!themeName) return {};
-  const themePath = path.join(pluginRoot, 'themes', `${themeName}.json`);
-  if (!fs.existsSync(themePath)) return {};
-  try {
-    return JSON.parse(fs.readFileSync(themePath, 'utf-8'));
-  } catch {
-    return {};
-  }
-}
-
-/**
  * Load user config (scopi.config.json) from the working directory
- * @param {string} cwd - Current working directory to search for config
- * @returns {object} User config or empty object
  */
 function loadConfig(cwd) {
   const configPath = path.join(cwd || process.cwd(), 'scopi.config.json');
@@ -120,29 +100,27 @@ function loadConfig(cwd) {
 }
 
 /**
- * Build the full design system by merging defaults + theme + user config
- * @param {object} opts - { cwd, pluginRoot }
- * @returns {object} Complete DESIGN object
+ * Build the full design system by merging defaults + config inline theme
+ * In v2, the theme lives INSIDE scopi.config.json (generated at setup)
+ * No more separate theme JSON files.
  */
 function createDesignSystem(opts = {}) {
-  const pluginRoot = opts.pluginRoot || path.resolve(__dirname, '..');
   const cwd = opts.cwd || process.cwd();
   const config = loadConfig(cwd);
-  const theme = loadTheme(config.theme, pluginRoot);
+  const inlineTheme = config.theme || {};
 
-  // Merge: defaults ← theme colors/fonts ← config brand overrides
   const DESIGN = {
     width: config.dimensions?.width || DEFAULTS.width,
     height: config.dimensions?.height || DEFAULTS.height,
 
     colors: {
       ...DEFAULTS.colors,
-      ...(theme.colors || {}),
+      ...(inlineTheme.colors || {}),
     },
 
     fonts: {
       ...DEFAULTS.fonts,
-      ...(theme.fonts || {}),
+      ...(inlineTheme.fonts || {}),
     },
 
     fontSize: { ...DEFAULTS.fontSize },
@@ -152,10 +130,13 @@ function createDesignSystem(opts = {}) {
       ...DEFAULTS.brand,
       ...(config.brand || {}),
     },
+
+    // v2: expose full identity for agents
+    identity: config.identity || {},
+    language: config.language || 'en',
   };
 
   return DESIGN;
 }
 
-// Export both the factory and static defaults for backward compat
-module.exports = { createDesignSystem, DEFAULTS, loadTheme, loadConfig };
+module.exports = { createDesignSystem, DEFAULTS, loadConfig };

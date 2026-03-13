@@ -12,6 +12,7 @@ When AI generates content, it gravitates toward the statistical center — the m
 - Generic hooks ("Did you know...?")
 - Standard layouts (centered, symmetrical, safe)
 - Expected content angles (the obvious tutorial format)
+- Identical slide compositions across every deck
 
 The result: content that looks like everything else in the feed. Scroll-past material.
 
@@ -53,22 +54,26 @@ Option C (T=0.31): Myth-busting — "Everyone thinks X, but actually Y"
 → Recommend Option C (lowest T-Score, highest novelty)
 ```
 
+NARA also adapts slide count per option — a 5-tool listicle might need 10 slides, while a single concept might need 6.
+
 ### 2. Visual Design (GYEOL)
 
-When designing slides, GYEOL proposes 3 visual directions:
+When designing slides using free composition, GYEOL proposes 3 visual directions:
 
 ```
-Option A (T=0.78): Clean grid, standard card layout
+Option A (T=0.78): Clean centered layouts, consistent card structure
   → Professional, expected, LinkedIn-safe
 
-Option B (T=0.45): Asymmetric split, oversized typography
+Option B (T=0.45): Asymmetric splits, oversized typography, varied density
   → Dynamic, editorial, attention-grabbing
 
-Option C (T=0.29): Terminal-first, code-aesthetic with accent pops
+Option C (T=0.29): Full-bleed captures, minimal text, dramatic scale shifts
   → Unique for academic content, highly differentiated
 
 → User selects or GYEOL recommends lowest-T viable option
 ```
+
+Each direction describes unique compositions per slide, not template selections.
 
 ### 3. Layout Variation (GANA)
 
@@ -79,6 +84,16 @@ Option A (T=0.75): Centered headline with subtitle below
 Option B (T=0.40): Left-aligned headline with right accent block
 Option C (T=0.25): Full-bleed background with text overlay
 → Build all three, user previews and selects
+```
+
+### 4. Theme Generation (GYEOL — during setup)
+
+When generating themes from identity data, GYEOL creates 3 palette options with VS:
+
+```
+Option A (T=0.78): Expected palette for content type
+Option B (T=0.45): Unexpected color combination that still works
+Option C (T=0.29): Bold, distinctive palette that stands out
 ```
 
 ## The T-Score Selection Rule
@@ -106,7 +121,7 @@ If T-Scores trend upward across episodes, NARA will flag the drift and push for 
 ## Why This Matters
 
 In a feed of 100 posts, the typical post gets scrolled past. VS ensures your card news:
-1. **Stands out visually** — unusual layouts and color use
+1. **Stands out visually** — unique compositions and unexpected layouts
 2. **Hooks emotionally** — unexpected angles and provocative openings
 3. **Stays fresh** — tracked novelty prevents creative fatigue
 4. **Remains clear** — novelty is bounded by comprehension

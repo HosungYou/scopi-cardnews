@@ -1,9 +1,9 @@
-# 🦊 Scopi Cardnews
+# Scopi Cardnews
 
 > **Professional card news generator plugin for [Claude Code](https://claude.ai/code)**
-> 7 expert-persona agents · VS-powered creative design · HTML → PNG → PDF pipeline
+> 7 expert-persona agents · VS-powered creative design · Free composition · Playwright capture · HTML → PNG → PDF pipeline
 
-Turn any topic into scroll-stopping social media card news. Scopi orchestrates 7 specialized AI agents — each with deep professional backgrounds — through a 7-phase production pipeline. Content strategy, visual design, copy refinement, HTML generation, screenshot capture, ethics review, and empathy testing, all from a single `/scopi:generate` command.
+Turn any topic into scroll-stopping social media card news. Scopi orchestrates 7 specialized AI agents — each with deep professional backgrounds — through a multi-phase production pipeline. Content strategy, real screenshot capture, free-composition visual design, copy refinement, HTML generation, ethics review, and empathy testing, all from a single `/scopi:generate` command.
 
 **For researchers, creators, and anyone who publishes visual content on social media.**
 
@@ -14,9 +14,9 @@ Turn any topic into scroll-stopping social media card news. Scopi orchestrates 7
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Commands](#commands)
-- [The 7-Phase Pipeline](#the-7-phase-pipeline)
+- [The Generation Pipeline](#the-generation-pipeline)
 - [Expert Agents](#expert-agents)
-- [Themes](#themes)
+- [Dynamic Themes](#dynamic-themes)
 - [VS Methodology](#vs-methodology)
 - [Customization](#customization)
 - [Project Structure](#project-structure)
@@ -34,10 +34,9 @@ Turn any topic into scroll-stopping social media card news. Scopi orchestrates 7
 
 - **[Claude Code](https://claude.ai/code)** CLI installed and authenticated
 - **Node.js 18+** (for Puppeteer rendering pipeline)
+- **Playwright** (optional, for screenshot capture of external tools/services)
 
 ### Option 1: Marketplace Install (Recommended)
-
-Register the marketplace and install the plugin in two commands:
 
 ```bash
 # Step 1: Add the scopi-cardnews marketplace
@@ -47,45 +46,25 @@ claude plugin marketplace add HosungYou/scopi-cardnews
 claude plugin install scopi-cardnews@scopi-cardnews
 ```
 
-That's it. The plugin is now available in all Claude Code sessions.
-
 ### Option 2: Local Install (for development)
 
 ```bash
-# Clone the repository
 git clone https://github.com/HosungYou/scopi-cardnews.git
-
-# Install npm dependencies (for Puppeteer + pdf-lib)
 cd scopi-cardnews && npm install
-
-# Load as a local plugin for a single session
 claude --plugin-dir /path/to/scopi-cardnews
 ```
 
 ### Verify Installation
 
 ```bash
-# Check that the plugin is installed and enabled
 claude plugin list
 ```
 
-You should see:
-
-```
-❯ scopi-cardnews@scopi-cardnews
-  Version: 1.0.0
-  Scope: user
-  Status: ✔ enabled
-```
-
-### Install Puppeteer Dependencies
-
-The generation pipeline requires Puppeteer to render HTML into PNG screenshots. After installing the plugin, ensure npm dependencies are available:
+### Install Optional Dependencies
 
 ```bash
-# If installed via marketplace, dependencies are in the plugin cache.
-# If you get Puppeteer errors, install manually:
-cd ~/.claude/plugins/marketplaces/HosungYou-scopi-cardnews && npm install
+# For Playwright screenshot capture (recommended)
+npx playwright install chromium
 ```
 
 ---
@@ -98,7 +77,7 @@ cd ~/.claude/plugins/marketplaces/HosungYou-scopi-cardnews && npm install
 /scopi:setup
 ```
 
-An interactive wizard walks you through brand name, colors, platform, agents, and content series. Generates `scopi.config.json` in your working directory.
+A deep brand identity interview captures your voice, audience, visual style, and generates a unique theme dynamically. Produces `scopi.config.json`.
 
 ### 2. Brainstorm content
 
@@ -106,7 +85,7 @@ An interactive wizard walks you through brand name, colors, platform, agents, an
 /scopi:content AI tools for academic writing
 ```
 
-NARA (Content Strategist) proposes 3 creative directions using VS methodology, each scored by novelty. Pick your favorite.
+NARA proposes 3 creative directions using VS methodology, identifies capture URLs for tools/services, and adapts slide count to content.
 
 ### 3. Generate card news
 
@@ -114,7 +93,7 @@ NARA (Content Strategist) proposes 3 creative directions using VS methodology, e
 /scopi:generate
 ```
 
-The full 7-phase pipeline runs: content strategy → copy refinement → visual design → HTML slides → PNG screenshots → PDF carousel → ethics & empathy review.
+The full pipeline runs: content strategy → screenshot capture → free-composition design → HTML slides → PNG → PDF → ethics & empathy review.
 
 ### 4. Get social media copy
 
@@ -122,7 +101,7 @@ The full 7-phase pipeline runs: content strategy → copy refinement → visual 
 /scopi:caption
 ```
 
-DARI and BINNA generate platform-optimized captions and hashtags for Instagram, LinkedIn, Twitter, and Threads.
+DARI and BINNA generate platform-optimized captions and hashtags.
 
 ### 5. Preview output
 
@@ -130,78 +109,78 @@ DARI and BINNA generate platform-optimized captions and hashtags for Instagram, 
 open output/your-topic/
 ```
 
-You'll find individual PNG slides (`slide-01.png` through `slide-08.png`) and a combined `carousel.pdf` ready for LinkedIn upload.
-
 ---
 
 ## Commands
 
 | Command | Agent(s) | Description |
 |---------|----------|-------------|
-| `/scopi:setup` | — | Interactive brand setup wizard → `scopi.config.json` |
+| `/scopi:setup` | GYEOL | Brand identity interview + dynamic theme generation |
 | `/scopi:content` | NARA | Brainstorm topics with VS creative alternatives |
-| `/scopi:design` | GYEOL | Explore visual directions before committing |
-| `/scopi:generate` | All | Full 7-phase pipeline → PNG + PDF output |
-| `/scopi:build` | GANA | Render existing HTML slides → PNG + PDF |
+| `/scopi:design` | GYEOL | Explore visual directions with free composition |
+| `/scopi:generate` | All | Full pipeline → PNG + PDF output |
+| `/scopi:build` | GANA | Capture screenshots + render HTML → PNG + PDF |
 | `/scopi:caption` | DARI + BINNA | Social media captions + hashtags |
 | `/scopi:review` | JURI + MARU | Ethics + empathy quality review (read-only) |
-| `/scopi:theme` | GYEOL | Browse, apply, or create visual themes |
+| `/scopi:theme` | GYEOL | View, customize, or regenerate your theme |
 | `/scopi:help` | — | Show all commands and documentation |
 
 ---
 
-## The 7-Phase Pipeline
+## The Generation Pipeline
 
 `/scopi:generate` orchestrates a complete production pipeline:
 
 ```
-Phase 1  NARA     Content strategy + story arc + VS alternatives
+Phase 1  NARA     Content strategy + story arc + VS alternatives + capture URL identification
 Phase 2  User     Select direction (or auto-commit to lowest T-Score)
-Phase 3  BINNA    Copy refinement + tone calibration
-Phase 4  GYEOL    Visual design tokens + layout selection
-Phase 5  GANA     HTML generation + Puppeteer → PNG → PDF
+Phase 3  BINNA    Copy refinement + tone calibration (identity-aware)
+Phase 4  GANA     Playwright screenshot capture of tools/services
+Phase 5  GYEOL    Free composition design + GANA HTML generation → PNG → PDF
 Phase 6  JURI     Ethics review (read-only report)
 Phase 7  MARU     Empathy test (read-only report)
 ```
 
-**Output**: PNG slides + PDF carousel + quality review reports.
+### Key v2 Features
 
-Each phase is optional — agents can be enabled/disabled in `scopi.config.json`. GANA (Slide Engineer) is the only required agent for generation.
+- **Free composition** — every slide is a unique design, not a template pick
+- **Playwright capture** — real screenshots of tools/services embedded in slides
+- **Identity-aware** — all decisions informed by your brand identity (voice, audience, visual style)
+- **Adaptive slide count** — 6 or 12 slides, whatever the content needs
+- **Visual rhythm** — varied density, scale, and composition across slides
 
 ---
 
 ## Expert Agents
 
-7 agents with distinct professional backgrounds, each specialized for their phase.
+7 agents with distinct professional backgrounds.
 
-| Agent | Korean | Role | Specialty | Type |
-|-------|--------|------|-----------|------|
-| **NARA** | 나라 | Content Strategist | Story arcs, hooks, VS ideation | Read/Write |
-| **GYEOL** | 결 | Visual Architect | Design systems, themes, layout | Read/Write |
-| **GANA** | 가나 | Slide Engineer | HTML coding, Puppeteer pipeline | Read/Write |
-| **DARI** | 다리 | Audience Strategist | Captions, hashtags, platforms | Read/Write |
-| **BINNA** | 빈나 | Copy Surgeon | Text refinement, bilingual copy | Read/Write |
-| **JURI** | 주리 | Ethics Inspector | Ethics, copyright, accuracy | **Read-Only** |
-| **MARU** | 마루 | Empathy Tester | Audience reaction, accessibility | **Read-Only** |
+| Agent | Korean | Role | Type |
+|-------|--------|------|------|
+| **NARA** | 나라 | Content Strategist — story arcs, hooks, capture URLs | Read/Write |
+| **GYEOL** | 결 | Visual Architect — free composition, themes, visual rhythm | Read/Write |
+| **GANA** | 가나 | Slide Engineer — HTML coding, capture pipeline, rendering | Read/Write |
+| **DARI** | 다리 | Audience Strategist — captions, hashtags, platforms | Read/Write |
+| **BINNA** | 빈나 | Copy Surgeon — text refinement, bilingual copy | Read/Write |
+| **JURI** | 주리 | Ethics Inspector — ethics, copyright, accuracy | **Read-Only** |
+| **MARU** | 마루 | Empathy Tester — audience reaction, accessibility | **Read-Only** |
 
-JURI and MARU are deliberately read-only — they review and report but never modify your content. This separation ensures unbiased quality assessment.
+JURI and MARU are deliberately read-only — they review and report but never modify your content.
 
-See [docs/agents.md](docs/agents.md) for full persona backgrounds and output formats.
+See [docs/agents.md](docs/agents.md) for full persona backgrounds.
 
 ---
 
-## Themes
+## Dynamic Themes
 
-4 built-in visual themes. Switch with `/scopi:theme` or edit `scopi.config.json`.
+Themes are **dynamically generated** during `/scopi:setup` based on your brand identity interview. There are no preset themes — GYEOL (Visual Architect) creates a unique color palette and font pairing that matches your:
 
-| Theme | Colors | Mood |
-|-------|--------|------|
-| **warm-scholar** | Ivory `#FAF9F5` + Terracotta `#D97757` | Academic warmth (default) |
-| **midnight-academic** | Navy `#0F1B33` + Gold `#D4A843` | Scholarly elegance |
-| **minimal-mono** | White `#FFFFFF` + Red `#E63946` | Swiss design clarity |
-| **tech-neon** | Dark `#0D1117` + Green `#39D353` | Cyberpunk tech |
+- Content type (academic, business, personal brand)
+- Visual style preference
+- Communication voice
+- Content priority
 
-Create custom themes by adding a JSON file to `themes/`. See [docs/customization.md](docs/customization.md).
+The theme is stored inline in `scopi.config.json` and can be customized or regenerated anytime with `/scopi:theme`.
 
 ---
 
@@ -220,8 +199,8 @@ Option C (T=0.31): Myth-busting contrarian take        ← scroll-stopping
 
 VS is applied at 3 points:
 1. **Content direction** (NARA) — what angle to take
-2. **Visual design** (GYEOL) — how slides look
-3. **Layout structure** (GANA) — how slides are composed
+2. **Visual design** (GYEOL) — how slides look and flow
+3. **Layout structure** (GANA) — how key slides are composed
 
 See [docs/vs-methodology.md](docs/vs-methodology.md) for the full explanation.
 
@@ -229,19 +208,17 @@ See [docs/vs-methodology.md](docs/vs-methodology.md) for the full explanation.
 
 ## Customization
 
-Scopi is designed for deep customization at every level:
-
 | What | How |
 |------|-----|
-| **Brand** | Edit `brand` in `scopi.config.json` |
-| **Theme** | Create a theme JSON in `themes/`, or use `/scopi:theme create` |
+| **Brand identity** | Re-run `/scopi:setup` or edit `identity` in `scopi.config.json` |
+| **Theme** | `/scopi:theme customize` or `/scopi:theme regenerate` |
 | **Agents** | Add custom agent `.md` files in `agents/` |
-| **Layouts** | Add layout `.js` components in `templates/layouts/` |
+| **Layouts** | Layout files in `templates/layouts/` serve as examples for free composition |
 | **Series** | Define content series with tags, colors, tones in config |
 | **Dimensions** | Set any width/height for any platform |
-| **Pipeline** | Toggle retina, choose output formats (png/pdf) |
+| **Pipeline** | Toggle retina, capture, choose output formats (png/pdf) |
 
-See [docs/customization.md](docs/customization.md) for the full guide with code examples.
+See [docs/customization.md](docs/customization.md) for the full guide.
 
 ---
 
@@ -253,18 +230,18 @@ scopi-cardnews/
 │   ├── marketplace.json         # Marketplace registry manifest
 │   └── plugin.json              # Plugin entry point
 ├── plugin.json                  # Plugin manifest (skills + agents)
-├── package.json                 # npm deps (puppeteer, pdf-lib)
+├── package.json                 # npm deps (puppeteer, pdf-lib, playwright)
 │
 ├── skills/                      # 9 slash commands
-│   ├── setup/SKILL.md           # /scopi:setup
-│   ├── generate/SKILL.md        # /scopi:generate
-│   ├── design/SKILL.md          # /scopi:design
-│   ├── build/SKILL.md           # /scopi:build
-│   ├── review/SKILL.md          # /scopi:review
-│   ├── content/SKILL.md         # /scopi:content
-│   ├── caption/SKILL.md         # /scopi:caption
-│   ├── theme/SKILL.md           # /scopi:theme
-│   └── help/SKILL.md            # /scopi:help
+│   ├── setup/SKILL.md           # /scopi:setup — brand identity interview
+│   ├── generate/SKILL.md        # /scopi:generate — full pipeline
+│   ├── design/SKILL.md          # /scopi:design — VS visual exploration
+│   ├── build/SKILL.md           # /scopi:build — capture + render
+│   ├── review/SKILL.md          # /scopi:review — ethics + empathy QA
+│   ├── content/SKILL.md         # /scopi:content — content ideation
+│   ├── caption/SKILL.md         # /scopi:caption — social media copy
+│   ├── theme/SKILL.md           # /scopi:theme — theme management
+│   └── help/SKILL.md            # /scopi:help — command reference
 │
 ├── agents/                      # 7 expert agent personas
 │   ├── nara.md                  # Content Strategist
@@ -276,24 +253,16 @@ scopi-cardnews/
 │   └── maru.md                  # Empathy Tester (read-only)
 │
 ├── templates/                   # Core rendering engine
-│   ├── design-system.js         # Theme-aware design tokens
+│   ├── design-system.js         # Dynamic theme-aware design tokens
 │   ├── slide-renderer.js        # Config-aware component library
 │   ├── generate.js              # HTML → PNG → PDF pipeline
-│   └── layouts/                 # 8 slide layout components
-│       ├── hook.js              # Slide 1: crisis hook (accent)
-│       ├── problem.js           # Slide 2: pain points
-│       ├── solution.js          # Slide 3: solution reveal
-│       ├── demo.js              # Slide 4: terminal demo
-│       ├── result.js            # Slide 5: before/after
-│       ├── tip.js               # Slide 6: power-user tip
-│       ├── caution.js           # Slide 7: ethics/limitations
-│       └── cta.js               # Slide 8: CTA + teaser
+│   ├── capture.js               # Playwright screenshot capture
+│   └── layouts/                 # Example layouts (inspiration for free composition)
+│       ├── hook.js, problem.js, solution.js, demo.js
+│       ├── result.js, tip.js, caution.js, cta.js
 │
-├── themes/                      # Visual theme presets
-│   ├── warm-scholar.json
-│   ├── midnight-academic.json
-│   ├── minimal-mono.json
-│   └── tech-neon.json
+├── themes/
+│   └── README.md                # Explains dynamic theme generation
 │
 ├── config/
 │   └── scopi.config.example.json
@@ -304,10 +273,7 @@ scopi-cardnews/
     ├── customization.md         # Full customization guide
     ├── vs-methodology.md        # VS creative design explanation
     └── specs/
-        ├── PRD.md               # Product Requirements Document
-        ├── SPEC.md              # Technical Specification
-        ├── SDD.md               # Software Design Document
-        └── TDD.md               # Test Design Document
+        ├── PRD.md, SPEC.md, SDD.md, TDD.md
 ```
 
 ---
@@ -316,13 +282,13 @@ scopi-cardnews/
 
 | Document | Description |
 |----------|-------------|
-| [PRD](docs/specs/PRD.md) | Product Requirements — features, user personas, success metrics, release plan |
-| [SPEC](docs/specs/SPEC.md) | Technical Specification — architecture, module specs, config schema, error handling |
-| [SDD](docs/specs/SDD.md) | Software Design — layered architecture, token resolution, agent design, extensibility |
-| [TDD](docs/specs/TDD.md) | Test Design — unit/integration/plugin/visual test cases, acceptance criteria |
 | [Agents](docs/agents.md) | Agent persona reference — backgrounds, responsibilities, dispatch flow |
 | [Customization](docs/customization.md) | Full customization guide — themes, agents, layouts, series, hooks |
-| [VS Methodology](docs/vs-methodology.md) | Verbalized Sampling explanation — T-Scores, integration points, anti-drift |
+| [VS Methodology](docs/vs-methodology.md) | Verbalized Sampling — T-Scores, integration points, anti-drift |
+| [PRD](docs/specs/PRD.md) | Product Requirements |
+| [SPEC](docs/specs/SPEC.md) | Technical Specification |
+| [SDD](docs/specs/SDD.md) | Software Design Document |
+| [TDD](docs/specs/TDD.md) | Test Design Document |
 
 ---
 
@@ -330,98 +296,63 @@ scopi-cardnews/
 
 ### Plugin not showing slash commands
 
-Restart Claude Code after installing the plugin. Skills load at session start.
-
-```bash
-# Verify installation
-claude plugin list | grep scopi
-```
+Restart Claude Code after installing. Skills load at session start.
 
 ### Puppeteer errors during generation
 
-The rendering pipeline requires Chromium. If Puppeteer can't launch:
-
 ```bash
-# Reinstall puppeteer with Chromium
 cd ~/.claude/plugins/marketplaces/HosungYou-scopi-cardnews
 npm install puppeteer
 ```
 
-On macOS, you may need to allow Chromium in System Settings > Privacy & Security.
+On macOS, allow Chromium in System Settings > Privacy & Security.
+
+### Playwright capture not working
+
+```bash
+npx playwright install chromium
+```
+
+If Playwright is unavailable, the capture pipeline falls back to Puppeteer.
 
 ### Fonts not rendering correctly
 
-The pipeline waits up to 5 seconds for Google Fonts to load, then proceeds with fallbacks. For consistent results:
-- Use fonts available on Google Fonts (Inter, Source Serif 4, Fira Code are defaults)
-- The pipeline adds an 800ms settle time after font load
+The pipeline waits up to 5 seconds for Google Fonts, then uses fallbacks. Use fonts available on Google Fonts for best results.
 
 ### `scopi.config.json` not found
 
-Run `/scopi:setup` in your project directory to generate the config file. The config is per-project and gitignored by default.
+Run `/scopi:setup` in your project directory.
 
-### Theme not applying
+### Theme issues
 
-Ensure the theme name in `scopi.config.json` matches a `.json` filename in `themes/` (without the extension):
-
-```json
-{ "theme": "midnight-academic" }
-```
-
-matches `themes/midnight-academic.json`.
+In v2, themes are inline in `scopi.config.json`. Use `/scopi:theme customize` to adjust or `/scopi:theme regenerate` to create a new one.
 
 ---
 
 ## Uninstall
 
 ```bash
-# Remove the plugin
 claude plugin uninstall scopi-cardnews
-
-# Remove the marketplace (optional)
-claude plugin marketplace remove scopi-cardnews
-```
-
----
-
-## Update
-
-```bash
-# Update to latest version
-claude plugin update scopi-cardnews
-```
-
-Or, to refresh the marketplace cache:
-
-```bash
-claude plugin marketplace update scopi-cardnews
+claude plugin marketplace remove scopi-cardnews  # optional
 ```
 
 ---
 
 ## Contributing
 
-Contributions welcome! Some ways to contribute:
+Contributions welcome!
 
-- **New themes** — Add a theme JSON to `themes/` and submit a PR
-- **New layouts** — Build reusable slide layout components
 - **Agent improvements** — Refine agent personas for better output
+- **Layout examples** — Add example layouts for free composition inspiration
+- **Pipeline enhancements** — Improve capture, rendering, or PDF assembly
 - **Bug reports** — Open an issue with reproduction steps
 
 ### Development Setup
 
 ```bash
 git clone https://github.com/HosungYou/scopi-cardnews.git
-cd scopi-cardnews
-npm install
-
-# Test locally
+cd scopi-cardnews && npm install
 claude --plugin-dir .
-```
-
-### Plugin Validation
-
-```bash
-claude plugin validate .
 ```
 
 ---

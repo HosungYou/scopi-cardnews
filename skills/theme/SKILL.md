@@ -1,111 +1,139 @@
 ---
 name: scopi:theme
-description: Browse, apply, or create visual themes for your card news — manage the theme system
+description: View, customize, or regenerate your dynamically generated theme
 user_invocable: true
 ---
 
 # /scopi:theme — Theme Manager
 
-You are running the Scopi theme manager. This lets users browse, apply, customize, and create themes.
+You are running the Scopi theme manager. In v2, themes are dynamically generated during `/scopi:setup` based on the brand identity interview — there are no preset themes. This skill lets users view, customize, or regenerate their theme.
 
 ## Input Modes
 
-- `/scopi:theme` — Browse all available themes
-- `/scopi:theme warm-scholar` — Apply a specific theme
-- `/scopi:theme create` — Create a new custom theme
-- `/scopi:theme customize` — Modify current theme tokens
+- `/scopi:theme` — View current theme details
+- `/scopi:theme customize` — Modify specific theme tokens
+- `/scopi:theme regenerate` — Re-run GYEOL's theme generation with new parameters
 
-## Flow: Browse
+## Flow: View
 
-### List Available Themes
-
-Read all `.json` files in the plugin's `themes/` directory. Display:
+Read `scopi.config.json` and display the current inline theme:
 
 ```
-🎨 Available Themes
+Your Theme: [theme name]
+[description]
 
-1. Warm Scholar (default)
-   Ivory + terracotta — academic warmth
-   ██████ #FAF9F5  ██████ #D97757
+Colors:
+  Background:  [warmBg]
+  Accent:      [accent]
+  Text:        [textPrimary] / [textSecondary] / [textTertiary]
+  Card:        [cardBg]
+  Terminal:    [termBg] / [termHeader]
 
-2. Midnight Academic
-   Dark navy + gold — scholarly elegance
-   ██████ #0F1B33  ██████ #D4A843
+Fonts:
+  Heading: [heading font]
+  Body:    [body font]
+  Code:    [code font]
 
-3. Minimal Mono
-   White + black + red — Swiss clarity
-   ██████ #FFFFFF  ██████ #E63946
+Options:
+  /scopi:theme customize   — Modify specific tokens
+  /scopi:theme regenerate  — Generate a new theme from scratch
+```
 
-4. Tech Neon
-   Dark + neon green — cyberpunk tech
-   ██████ #0D1117  ██████ #39D353
+## Flow: Customize
 
-[+ any custom themes in project themes/ directory]
+Read the current theme from `scopi.config.json`. Use AskUserQuestion:
 
-Current theme: [from scopi.config.json]
+> **What would you like to change?**
+> Examples: "accent color to #3B82F6", "heading font to Playfair Display", "darker background"
+> You can describe changes naturally — GYEOL will interpret and apply them.
+
+Dispatch GYEOL to:
+1. Interpret the user's request
+2. Adjust the relevant tokens
+3. Ensure color harmony is maintained (derived colors like accentSoft, accentBorder update automatically)
+4. Present the updated theme for approval
+
+Update `scopi.config.json` with the new theme values.
+
+## Flow: Regenerate
+
+Use AskUserQuestion:
+
+> **What visual direction do you want?**
+> Describe the mood, style, or reference — or answer these:
+> 1. Warm/cool/dark/light?
+> 2. Any specific colors?
+> 3. Any reference brands or styles?
+
+Dispatch GYEOL to generate a completely new theme based on:
+- The user's new direction
+- Existing `identity` data from config
+- VS methodology (3 options with T-Scores)
+
+Present 3 theme options:
+
+```
+GYEOL's Theme Options
+
+Option A (T=0.78): [name]
+  [description]
+  Background: [warmBg] Accent: [accent]
+  Fonts: [heading] + [body]
+
+Option B (T=0.45): [name]
+  [description]
+  Background: [warmBg] Accent: [accent]
+  Fonts: [heading] + [body]
+
+Option C (T=0.29): [name]
+  [description]
+  Background: [warmBg] Accent: [accent]
+  Fonts: [heading] + [body]
+
+Recommended: Option [X]
 ```
 
 Use AskUserQuestion:
 
-> **Select a theme to apply (1-4), or type "create" / "customize"**
+> **Which theme? (A/B/C)**
 
-## Flow: Apply
+Write the selected theme to `scopi.config.json`.
 
-Update `scopi.config.json` to set the `theme` field to the selected theme name.
-
-Confirm:
-```
-✅ Theme applied: [theme name]
-   Run /scopi:build to regenerate slides with the new theme.
-```
-
-## Flow: Create
-
-Use AskUserQuestion to gather:
-
-1. **Theme name**: (e.g., "Ocean Breeze")
-2. **Background color**: hex (e.g., #F0F4F8)
-3. **Accent color**: hex (e.g., #2B6CB0)
-4. **Text color**: hex (e.g., #1A202C)
-5. **Card background**: hex (e.g., #FFFFFF)
-6. **Terminal background**: hex (e.g., #1A202C)
-7. **Font preference**: serif / sans-serif / monospace-heavy
-
-Generate a complete theme JSON from these inputs, filling in derived colors (soft/medium/border variants, terminal palette). Write to `themes/[name-slug].json`.
-
-## Flow: Customize
-
-Read the current theme JSON. Display all tokens. Use AskUserQuestion to let the user modify specific tokens.
-
-Write the updated theme back.
-
-## Theme JSON Structure
+## Theme Structure (in scopi.config.json)
 
 ```json
 {
-  "name": "Theme Name",
-  "description": "One-line description",
-  "colors": {
-    "warmBg": "#...",
-    "accent": "#...",
-    "accentBg": "#...",
-    "accentText": "#...",
-    "textPrimary": "#...",
-    "textSecondary": "#...",
-    "textTertiary": "#...",
-    "cardBg": "#...",
-    "termBg": "#...",
-    "termHeader": "#...",
-    "termPrompt": "#...",
-    "termText": "#...",
-    "termGreen": "#...",
-    "termYellow": "#...",
-    "termComment": "#..."
-  },
-  "fonts": {
-    "heading": "...",
-    "body": "...",
-    "code": "..."
+  "theme": {
+    "name": "Generated Theme Name",
+    "description": "One-line description",
+    "colors": {
+      "warmBg": "#...",
+      "accent": "#...",
+      "accentBg": "#...",
+      "accentText": "#...",
+      "accentTextSoft": "rgba(...)",
+      "textPrimary": "#...",
+      "textSecondary": "#...",
+      "textTertiary": "#...",
+      "cardBg": "#...",
+      "accentSoft": "rgba(...)",
+      "accentMedium": "rgba(...)",
+      "accentBorder": "rgba(...)",
+      "termBg": "#...",
+      "termHeader": "#...",
+      "termPrompt": "#...",
+      "termText": "#...",
+      "termGreen": "#...",
+      "termYellow": "#...",
+      "termComment": "#..."
+    },
+    "fonts": {
+      "heading": "'Font', 'Fallback', sans-serif",
+      "body": "'Font', 'Fallback', serif",
+      "code": "'Fira Code', monospace"
+    }
   }
 }
 ```
+
+Themes are always inline in the config — never separate JSON files.

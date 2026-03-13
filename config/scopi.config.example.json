@@ -1,29 +1,57 @@
 {
+  "language": "en",
   "brand": {
-    "name": "Scopi",
+    "name": "Scopi Lab",
     "handle": "@scopi.lab",
-    "author": "Scopi",
+    "author": "Hosung You",
     "tagline": "AI × Academia"
   },
-  "theme": "warm-scholar",
-  "dimensions": {
-    "width": 1080,
-    "height": 1350
+  "identity": {
+    "contentType": "academic",
+    "audience": "Education researchers, PhD students, early-career faculty",
+    "audiencePainPoints": "Overwhelmed by manual workflows — lit reviews, coding, formatting. Want to use AI but unsure what's reliable.",
+    "voice": "Knowledgeable but approachable. Like explaining to a smart colleague over coffee.",
+    "visualStyle": "Clean, warm, academic but modern. Not corporate. Not playful.",
+    "priority": "information + visual impact",
+    "captureTargets": ["elicit.com", "consensus.app", "connectedpapers.com"]
   },
+  "theme": {
+    "name": "Warm Academic",
+    "description": "Generated from brand interview — ivory warmth with terracotta academic accent",
+    "colors": {
+      "warmBg": "#FAF9F5",
+      "accent": "#D97757",
+      "accentBg": "#D97757",
+      "accentText": "#FFFFFF",
+      "accentTextSoft": "rgba(255,255,255,0.85)",
+      "textPrimary": "#141413",
+      "textSecondary": "#4A4845",
+      "textTertiary": "#8A8680",
+      "cardBg": "#FFFFFF",
+      "termBg": "#2D2A2E",
+      "termHeader": "#383539",
+      "termPrompt": "#D97757",
+      "termText": "#FCFCFA",
+      "termGreen": "#A9DC76",
+      "termYellow": "#FFD866",
+      "termComment": "#727072"
+    },
+    "fonts": {
+      "heading": "'Inter', 'Noto Sans KR', sans-serif",
+      "body": "'Source Serif 4', 'Noto Serif KR', serif",
+      "code": "'Fira Code', monospace"
+    }
+  },
+  "dimensions": { "width": 1080, "height": 1350 },
   "platform": "instagram",
   "agents": {
     "active": ["nara", "gyeol", "gana", "dari", "binna", "juri", "maru"],
     "custom": []
   },
-  "series": [
-    {
-      "tag": "AI Recipes",
-      "color": "#D97757",
-      "tone": "practical"
-    }
-  ],
+  "series": [],
   "pipeline": {
     "retina": true,
-    "format": ["png", "pdf"]
+    "format": ["png", "pdf"],
+    "capture": true
   }
 }

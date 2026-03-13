@@ -1,7 +1,7 @@
 # Technical Specification (SPEC)
 
 **Product**: Scopi Cardnews
-**Version**: 1.0.0
+**Version**: 2.0.0
 **Author**: Hosung You
 **Date**: 2026-03-12
 **Status**: Released
@@ -17,32 +17,30 @@
 │                   Claude Code CLI                    │
 │                                                     │
 │  ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │
-│  │  Skills   │  │  Agents  │  │  Design System   │  │
-│  │ (9 SKILL  │  │ (7 .md   │  │  + Renderer      │  │
-│  │  .md)     │  │  files)  │  │  + Pipeline       │  │
+│  │  Skills   │  │  Agents  │  │  Engine Layer     │  │
+│  │ (9 SKILL  │  │ (7 .md   │  │  Design System   │  │
+│  │  .md)     │  │  files)  │  │  Renderer        │  │
+│  │           │  │          │  │  Capture          │  │
+│  │           │  │          │  │  Pipeline         │  │
 │  └────┬─────┘  └────┬─────┘  └────────┬─────────┘  │
 │       │              │                  │            │
 │       └──────────────┼──────────────────┘            │
 │                      │                               │
 │              ┌───────▼────────┐                      │
-│              │ scopi.config   │                      │
-│              │    .json       │                      │
+│              │ scopi.config   │ (inline theme +      │
+│              │    .json       │  identity data)      │
 │              └───────┬────────┘                      │
-│                      │                               │
-│              ┌───────▼────────┐                      │
-│              │  themes/*.json │                      │
-│              └────────────────┘                      │
-└─────────────────────────────────────────────────────┘
+└──────────────────────┼──────────────────────────────┘
                        │
-                       ▼
-              ┌────────────────┐
-              │   Puppeteer    │
-              │   (Chromium)   │
+              ┌────────▼────────┐
+              │   Playwright    │ ← capture external URLs
+              │   Puppeteer     │ ← render HTML → PNG
               └───────┬────────┘
                       │
               ┌───────▼────────┐
               │  Output:       │
               │  PNG + PDF     │
+              │  + captures    │
               └────────────────┘
 ```
 
@@ -63,19 +61,20 @@ scopi-cardnews/
 ├── Agent Layer (AI Personas)
 │   └── agents/*.md             → 7 expert personas with tool constraints
 │
-├── Engine Layer (Rendering)
-│   ├── templates/design-system.js   → Theme-aware token engine
+├── Engine Layer (Rendering + Capture)
+│   ├── templates/design-system.js   → Dynamic theme-aware token engine
 │   ├── templates/slide-renderer.js  → Config-aware component factory
 │   ├── templates/generate.js        → HTML → PNG → PDF pipeline
-│   └── templates/layouts/*.js       → 8 reusable slide templates
+│   ├── templates/capture.js         → Playwright screenshot capture
+│   └── templates/layouts/*.js       → Example layouts (inspiration)
 │
 ├── Data Layer (Configuration)
-│   ├── themes/*.json                → Visual theme presets
-│   ├── config/scopi.config.example  → Example user config
-│   └── [cwd]/scopi.config.json      → Per-project user config (generated)
+│   ├── [cwd]/scopi.config.json      → Per-project config (inline theme + identity)
+│   └── config/scopi.config.example  → Example config
 │
 └── Output Layer
-    └── [cwd]/output/               → Generated PNG + PDF files
+    ├── [cwd]/output/                → Generated PNG + PDF files
+    └── [cwd]/assets/captures/       → Playwright screenshots
 ```
 
 ### 1.3 Data Flow
@@ -90,33 +89,35 @@ User Input (topic)
     │
     ▼
 ┌─ Agent Layer ───────────────────────────────────────┐
-│  Phase 1: NARA  → content strategy + VS            │
-│  Phase 2: User  → direction selection               │
-│  Phase 3: BINNA → copy refinement                   │
-│  Phase 4: GYEOL → visual design + VS               │
-│  Phase 5: GANA  → HTML generation                   │
-│  Phase 6: JURI  → ethics report (read-only)         │
-│  Phase 7: MARU  → empathy report (read-only)        │
+│  Phase 1: NARA  → content strategy + VS + captures  │
+│  Phase 2: User  → direction selection                │
+│  Phase 3: BINNA → copy refinement (identity-aware)   │
+│  Phase 4: GANA  → Playwright capture (URLs → PNG)    │
+│  Phase 5: GYEOL → free composition + GANA HTML gen   │
+│  Phase 6: JURI  → ethics report (read-only)          │
+│  Phase 7: MARU  → empathy report (read-only)         │
 └─────────────────────────────────────────────────────┘
     │
     ▼
 ┌─ Engine Layer ──────────────────────────────────────┐
-│  design-system.js  ← themes/*.json + config         │
+│  capture.js   → Playwright → PNG screenshots        │
+│       │                                             │
+│  design-system.js ← config.theme (inline) + identity │
 │       │                                             │
 │       ▼                                             │
 │  slide-renderer.js → components (inline HTML/CSS)   │
 │       │                                             │
 │       ▼                                             │
-│  layouts/*.js      → full HTML slide documents      │
+│  [Custom HTML per slide — free composition]         │
 │       │                                             │
 │       ▼                                             │
-│  generate.js       → Puppeteer → PNG → pdf-lib →   │
-│                       PDF                           │
+│  generate.js → Puppeteer → PNG → pdf-lib → PDF     │
 └─────────────────────────────────────────────────────┘
     │
     ▼
-Output: output/{slug}/slide-01.png ... slide-08.png
+Output: output/{slug}/slide-01.png ... slide-[N].png
         output/{slug}/carousel.pdf
+        assets/captures/*.png
 ```
 
 ---
@@ -125,229 +126,122 @@ Output: output/{slug}/slide-01.png ... slide-08.png
 
 ### 2.1 Design System (`templates/design-system.js`)
 
-**Purpose**: Provide theme-aware design tokens to all rendering components.
+**Purpose**: Provide dynamic theme-aware design tokens with identity data.
 
 **Exports**:
 
 | Function | Signature | Description |
 |----------|-----------|-------------|
-| `createDesignSystem` | `(opts?: {cwd?, pluginRoot?}) → DESIGN` | Build merged token set |
-| `loadTheme` | `(themeName, pluginRoot) → themeOverrides` | Load theme JSON |
+| `createDesignSystem` | `(opts?: {cwd?}) → DESIGN` | Build merged token set from inline theme |
 | `loadConfig` | `(cwd) → userConfig` | Load scopi.config.json |
 | `DEFAULTS` | `object` | Static default tokens |
 
-**Merge Order**: `DEFAULTS` ← `theme.colors/fonts` ← `config.brand/dimensions`
+**Merge Order**: `DEFAULTS` ← `config.theme.colors/fonts` ← `config.brand/dimensions`
 
-**Token Categories**:
+**v2 Changes**:
+- Theme loaded from `config.theme` object (not separate JSON file)
+- `DESIGN.identity` exposes identity data to agents
+- `DESIGN.language` exposes language setting
+- Removed `loadTheme()` function (themes are inline)
 
-| Category | Count | Examples |
-|----------|-------|---------|
-| Colors | 28 | warmBg, accent, textPrimary, termBg, ... |
-| Fonts | 3 | heading, body, code |
-| Font Sizes | 9 | hero (140px) → tag (36px) |
-| Spacing | 6 | padding, gap, borderRadius, ... |
-| Brand | 4 | name, tag, author, tagline |
-| Dimensions | 2 | width, height |
+### 2.2 Capture Pipeline (`templates/capture.js`)
 
-### 2.2 Slide Renderer (`templates/slide-renderer.js`)
+**Purpose**: Screenshot capture of external tools/services.
+
+**Exports**:
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `captureOne` | `(browser, target) → pngPath` | Capture single URL/HTML |
+| `captureAll` | `(targets[], opts?) → Map<name, path>` | Batch capture |
+
+**Target Schema**:
+
+```typescript
+interface CaptureTarget {
+  name: string;          // Screenshot identifier
+  url?: string;          // URL to capture
+  html?: string;         // HTML string to capture (alternative)
+  selector?: string;     // CSS selector for element capture
+  viewport?: string;     // "widthxheight" (e.g., "1080x810")
+}
+```
+
+**Browser Priority**: Playwright (preferred) → Puppeteer (fallback)
+
+### 2.3 Slide Renderer (`templates/slide-renderer.js`)
 
 **Purpose**: Config-aware component factory producing inline HTML/CSS.
 
-**Exports**:
+Components: compositeIcon, foxMascot, foxIcon, seriesTag, footer, terminal, accentBlock, card, numberBadge, slideWrapper, DESIGN.
 
-| Function | Signature | Description |
-|----------|-----------|-------------|
-| `createRenderer` | `(opts?) → RendererInstance` | Factory function |
+**v2 Note**: In free composition, agents use these components as building blocks but compose them uniquely per slide, rather than calling fixed layout functions.
 
-**RendererInstance Methods**:
+### 2.4 Layout Examples (`templates/layouts/*.js`)
 
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `compositeIcon(size)` | HTML string | 🎓+🧭 composite emoji |
-| `foxMascot(size)` | SVG string | Terracotta fox + grad cap |
-| `foxIcon(size)` | SVG string | Compact fox face |
-| `seriesTag(mode, opts)` | HTML string | Editorial badge |
-| `footer(mode, pageNum, totalPages)` | HTML string | Author + page dots |
-| `terminal(title, lines, opts)` | HTML string | Terminal mockup |
-| `accentBlock(content, opts)` | HTML string | Terracotta highlight box |
-| `card(content, opts)` | HTML string | White elevated card |
-| `numberBadge(num, mode)` | HTML string | Circular number badge |
-| `slideWrapper(mode, content)` | HTML string | Full HTML5 document |
-| `DESIGN` | object | Current design tokens |
+**Purpose**: 8 example layouts serving as inspiration for free composition. NOT used as rigid templates in v2.
 
-**Design Principles**:
-- Inline styles only (no external CSS at runtime)
-- All values from DESIGN tokens (no hardcoded colors/fonts/sizes)
-- HTML5 compliant output
-- Google Fonts loaded via `<link>` in `<head>`
-
-### 2.3 Layout Components (`templates/layouts/*.js`)
-
-**Purpose**: 8 reusable slide templates following the narrative arc pattern.
-
-| Module | Export | Slide # | Default Mode | Key Props |
-|--------|--------|---------|-------------|-----------|
-| `hook.js` | `hookSlide(renderer, data)` | 1 | accent | title, subtitle, seriesLabel |
-| `problem.js` | `problemSlide(renderer, data)` | 2 | warm | title, points[{num, text}] |
-| `solution.js` | `solutionSlide(renderer, data)` | 3 | warm | title, description, highlight |
-| `demo.js` | `demoSlide(renderer, data)` | 4 | warm | title, terminalTitle, lines[] |
-| `result.js` | `resultSlide(renderer, data)` | 5 | warm | title, before{}, after{} |
-| `tip.js` | `tipSlide(renderer, data)` | 6 | warm | title, tipIcon, tipText, details |
-| `caution.js` | `cautionSlide(renderer, data)` | 7 | warm | title, warnings[{icon, text}], note |
-| `cta.js` | `ctaSlide(renderer, data)` | 8 | accent | title, subtitle, cta, handles[], nextEpisode |
-
-**Common Props** (all layouts): `pageNum`, `totalPages`
-
-### 2.4 Generation Pipeline (`templates/generate.js`)
+### 2.5 Generation Pipeline (`templates/generate.js`)
 
 **Purpose**: Orchestrate HTML → PNG → PDF conversion.
 
-**Exports**:
-
-| Function | Signature | Description |
-|----------|-----------|-------------|
-| `generateFromHTML` | `(htmlSlides[], opts?) → {pngPaths[], pdfPath}` | Core pipeline |
-
-**Pipeline Steps**:
-
-```
-1. Load config (scopi.config.json)
-2. Create design system
-3. mkdir output directory
-4. Launch Puppeteer (headless Chromium)
-5. Set viewport (width × height × deviceScaleFactor)
-6. For each HTML slide:
-   a. setContent(html, {waitUntil: 'domcontentloaded'})
-   b. Wait for fonts (document.fonts.ready, 5s timeout)
-   c. Settle delay (800ms)
-   d. Screenshot → PNG
-7. Close browser
-8. Assemble PNGs → PDF via pdf-lib
-9. Return paths
-```
-
-**Configuration**:
-
-| Option | Source | Default |
-|--------|--------|---------|
-| width | config.dimensions.width | 1080 |
-| height | config.dimensions.height | 1350 |
-| retina | config.pipeline.retina | true |
-| formats | config.pipeline.format | ["png", "pdf"] |
-| outDir | CLI arg or function param | output/cardnews |
+Same as v1. Accepts HTML slides array, renders via Puppeteer at configured dimensions.
 
 ---
 
 ## 3. Plugin Registration
 
-### 3.1 Marketplace Structure
-
-```
-.claude-plugin/
-├── marketplace.json    → Marketplace registry (name, owner, plugins[])
-└── plugin.json         → Plugin entry point (name, version, skills path)
-```
-
-### 3.2 marketplace.json Schema
-
-```json
-{
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "scopi-cardnews",
-  "description": "...",
-  "owner": { "name": "...", "email": "..." },
-  "plugins": [{
-    "name": "scopi-cardnews",
-    "version": "1.0.0",
-    "source": "./",
-    "category": "productivity",
-    "tags": [...]
-  }]
-}
-```
-
-### 3.3 Skill Registration
-
-Skills are registered via `plugin.json` (root level):
-
-```json
-{
-  "skills": [
-    "skills/setup",
-    "skills/generate",
-    ...
-  ]
-}
-```
-
-Each skill directory contains `SKILL.md` with frontmatter:
-
-```yaml
----
-name: scopi:generate
-description: Full card news generation pipeline
-user_invocable: true
----
-```
-
-### 3.4 Agent Registration
-
-Agents are registered via `plugin.json`:
-
-```json
-{
-  "agents": [
-    "agents/nara.md",
-    "agents/gyeol.md",
-    ...
-  ]
-}
-```
+Same as v1 (marketplace.json, plugin.json structure).
 
 ---
 
 ## 4. Configuration Schema
 
-### 4.1 scopi.config.json
+### 4.1 scopi.config.json (v2)
 
 ```typescript
 interface ScopiConfig {
+  language: 'ko' | 'en';
   brand: {
-    name: string;        // Brand display name
-    handle: string;      // Social media handle (e.g., "@scopi.lab")
-    author: string;      // Author name for slide footer
-    tagline?: string;    // Optional tagline
+    name: string;
+    handle: string;
+    author: string;
+    tagline?: string;
   };
-  theme: string;         // Theme file name (without .json)
+  identity: {
+    contentType: string;        // academic, business, personal-brand
+    audience: string;           // Free-text audience description
+    audiencePainPoints: string;  // Free-text pain points
+    voice: string;              // Communication style
+    visualStyle: string;        // Visual preference
+    priority: string;           // Content priority
+    captureTargets: string[];   // URLs for screenshot capture
+  };
+  theme: {                      // INLINE theme (not a file reference)
+    name: string;
+    description: string;
+    colors: Partial<DesignColors>;
+    fonts: Partial<DesignFonts>;
+  };
   dimensions: {
-    width: number;       // Slide width in pixels
-    height: number;      // Slide height in pixels
+    width: number;
+    height: number;
   };
   platform: 'instagram' | 'linkedin' | 'twitter' | 'multi';
   agents: {
-    active: string[];    // Agent names to enable
-    custom: string[];    // Custom agent file names
+    active: string[];
+    custom: string[];
   };
   series: Array<{
-    tag: string;         // Series display name
-    color: string;       // Accent color hex
-    tone: 'practical' | 'academic' | 'storytelling' | 'casual' | 'technical';
+    tag: string;
+    color: string;
+    tone: string;
   }>;
   pipeline: {
-    retina: boolean;     // 2x deviceScaleFactor
+    retina: boolean;
     format: ('png' | 'pdf')[];
+    capture: boolean;
   };
-}
-```
-
-### 4.2 Theme JSON
-
-```typescript
-interface ThemeConfig {
-  name: string;
-  description: string;
-  colors: Partial<DesignColors>;  // Overrides DEFAULTS.colors
-  fonts: Partial<DesignFonts>;    // Overrides DEFAULTS.fonts
 }
 ```
 
@@ -355,13 +249,11 @@ interface ThemeConfig {
 
 ## 5. Dependencies
 
-| Package | Version | Purpose | License |
-|---------|---------|---------|---------|
-| puppeteer | ^24.39.0 | Chromium screenshot rendering | Apache-2.0 |
-| pdf-lib | ^1.17.1 | PDF assembly from PNG images | MIT |
-
-**Runtime**: Node.js 18+
-**Platform**: macOS, Linux (Puppeteer manages its own Chromium)
+| Package | Version | Purpose | Required |
+|---------|---------|---------|----------|
+| puppeteer | ^24.39.0 | HTML rendering + fallback capture | Required |
+| pdf-lib | ^1.17.1 | PDF assembly | Required |
+| playwright | ^1.58.0 | Screenshot capture (preferred) | Optional |
 
 ---
 
@@ -370,19 +262,17 @@ interface ThemeConfig {
 | Error | Cause | Recovery |
 |-------|-------|----------|
 | Config not found | No scopi.config.json | Use DEFAULTS, warn user |
-| Theme not found | Theme name doesn't match file | Use DEFAULTS colors, warn |
+| Playwright not installed | Optional dep missing | Fall back to Puppeteer |
+| Capture URL unreachable | Network/DNS failure | Skip capture, warn user |
 | Puppeteer launch fail | Chromium not installed | `npm install puppeteer` message |
 | Font load timeout | Google Fonts slow/offline | Continue after 5s with fallbacks |
-| PNG write fail | Output directory permissions | Report error, suggest `mkdir -p` |
-| PDF assembly fail | Corrupt PNG | Skip corrupt slide, continue |
 
 ---
 
 ## 7. Security Considerations
 
 - No API keys stored in config or output
-- No network requests during rendering (fonts are cached after first load)
-- JURI agent reviews for data privacy issues in content
+- Capture targets are user-specified URLs only
+- JURI reviews for data privacy issues
 - `scopi.config.json` is gitignored by default
-- No user data transmitted to external services
-- Puppeteer runs with `--no-sandbox` for compatibility (headless only)
+- Puppeteer runs headless only
