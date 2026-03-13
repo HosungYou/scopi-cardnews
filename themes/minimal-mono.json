@@ -1,0 +1,33 @@
+{
+  "name": "Minimal Mono",
+  "description": "Pure white and black with a single accent color — Swiss design clarity",
+  "colors": {
+    "warmBg": "#FFFFFF",
+    "accent": "#E63946",
+    "accentBg": "#1A1A1A",
+    "accentText": "#FFFFFF",
+    "accentTextSoft": "rgba(255,255,255,0.8)",
+    "textPrimary": "#1A1A1A",
+    "textSecondary": "#4A4A4A",
+    "textTertiary": "#8A8A8A",
+    "cardBg": "#F5F5F5",
+    "accentSoft": "rgba(230,57,70,0.06)",
+    "accentMedium": "rgba(230,57,70,0.12)",
+    "accentBorder": "rgba(230,57,70,0.2)",
+    "termBg": "#1A1A1A",
+    "termHeader": "#2A2A2A",
+    "termPrompt": "#E63946",
+    "termText": "#F0F0F0",
+    "termGreen": "#4EC9B0",
+    "termYellow": "#DCDCAA",
+    "termComment": "#6A6A6A",
+    "termDotRed": "#E63946",
+    "termDotYellow": "#DCDCAA",
+    "termDotGreen": "#4EC9B0"
+  },
+  "fonts": {
+    "heading": "'Inter', 'Noto Sans KR', sans-serif",
+    "body": "'Inter', 'Noto Sans KR', sans-serif",
+    "code": "'JetBrains Mono', 'Fira Code', monospace"
+  }
+}

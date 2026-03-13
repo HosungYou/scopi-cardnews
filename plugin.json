@@ -1,0 +1,28 @@
+{
+  "name": "scopi-cardnews",
+  "version": "1.0.0",
+  "description": "Professional card news generator for Claude Code — expert-persona agents, VS-powered creative design, HTML → PNG → PDF pipeline",
+  "author": "Hosung You",
+  "license": "MIT",
+  "homepage": "https://github.com/HosungYou/scopi-cardnews",
+  "skills": [
+    "skills/setup",
+    "skills/generate",
+    "skills/design",
+    "skills/build",
+    "skills/review",
+    "skills/content",
+    "skills/caption",
+    "skills/theme",
+    "skills/help"
+  ],
+  "agents": [
+    "agents/nara.md",
+    "agents/gyeol.md",
+    "agents/gana.md",
+    "agents/dari.md",
+    "agents/binna.md",
+    "agents/juri.md",
+    "agents/maru.md"
+  ]
+}

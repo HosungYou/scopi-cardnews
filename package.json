@@ -1,0 +1,36 @@
+{
+  "name": "scopi-cardnews",
+  "version": "1.0.0",
+  "description": "Professional card news generator plugin for Claude Code",
+  "main": "templates/generate.js",
+  "scripts": {
+    "generate": "node templates/generate.js",
+    "postinstall": "echo '🦊 scopi-cardnews installed. Run /scopi:setup to configure your brand.'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HosungYou/scopi-cardnews.git"
+  },
+  "keywords": [
+    "claude-code",
+    "plugin",
+    "cardnews",
+    "slide-generator",
+    "puppeteer",
+    "pdf",
+    "social-media",
+    "instagram",
+    "linkedin"
+  ],
+  "author": "Hosung You",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "puppeteer": "^24.39.0"
+  },
+  "bugs": {
+    "url": "https://github.com/HosungYou/scopi-cardnews/issues"
+  },
+  "homepage": "https://github.com/HosungYou/scopi-cardnews#readme"
+}

@@ -1,0 +1,29 @@
+{
+  "brand": {
+    "name": "Scopi",
+    "handle": "@scopi.lab",
+    "author": "Scopi",
+    "tagline": "AI × Academia"
+  },
+  "theme": "warm-scholar",
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "platform": "instagram",
+  "agents": {
+    "active": ["nara", "gyeol", "gana", "dari", "binna", "juri", "maru"],
+    "custom": []
+  },
+  "series": [
+    {
+      "tag": "AI Recipes",
+      "color": "#D97757",
+      "tone": "practical"
+    }
+  ],
+  "pipeline": {
+    "retina": true,
+    "format": ["png", "pdf"]
+  }
+}

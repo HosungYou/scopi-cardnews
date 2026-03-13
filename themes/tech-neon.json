@@ -1,0 +1,33 @@
+{
+  "name": "Tech Neon",
+  "description": "Dark background with neon green and cyan accents — cyberpunk tech aesthetic",
+  "colors": {
+    "warmBg": "#0D1117",
+    "accent": "#39D353",
+    "accentBg": "#161B22",
+    "accentText": "#E6EDF3",
+    "accentTextSoft": "rgba(230,237,243,0.8)",
+    "textPrimary": "#E6EDF3",
+    "textSecondary": "#8B949E",
+    "textTertiary": "#6E7681",
+    "cardBg": "#161B22",
+    "accentSoft": "rgba(57,211,83,0.06)",
+    "accentMedium": "rgba(57,211,83,0.12)",
+    "accentBorder": "rgba(57,211,83,0.2)",
+    "termBg": "#0D1117",
+    "termHeader": "#161B22",
+    "termPrompt": "#39D353",
+    "termText": "#E6EDF3",
+    "termGreen": "#39D353",
+    "termYellow": "#E3B341",
+    "termComment": "#6E7681",
+    "termDotRed": "#F85149",
+    "termDotYellow": "#E3B341",
+    "termDotGreen": "#39D353"
+  },
+  "fonts": {
+    "heading": "'Inter', 'Noto Sans KR', sans-serif",
+    "body": "'Inter', 'Noto Sans KR', sans-serif",
+    "code": "'Fira Code', 'JetBrains Mono', monospace"
+  }
+}
