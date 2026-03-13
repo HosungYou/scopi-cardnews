@@ -20,6 +20,7 @@ Turn any topic into scroll-stopping social media card news. Scopi orchestrates 7
 - [VS Methodology](#vs-methodology)
 - [Customization](#customization)
 - [Project Structure](#project-structure)
+- [Documentation](#documentation)
 - [Troubleshooting](#troubleshooting)
 - [Uninstall](#uninstall)
 - [Contributing](#contributing)
@@ -301,8 +302,27 @@ scopi-cardnews/
 └── docs/
     ├── agents.md                # Agent persona reference
     ├── customization.md         # Full customization guide
-    └── vs-methodology.md        # VS creative design explanation
+    ├── vs-methodology.md        # VS creative design explanation
+    └── specs/
+        ├── PRD.md               # Product Requirements Document
+        ├── SPEC.md              # Technical Specification
+        ├── SDD.md               # Software Design Document
+        └── TDD.md               # Test Design Document
 ```
+
+---
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [PRD](docs/specs/PRD.md) | Product Requirements — features, user personas, success metrics, release plan |
+| [SPEC](docs/specs/SPEC.md) | Technical Specification — architecture, module specs, config schema, error handling |
+| [SDD](docs/specs/SDD.md) | Software Design — layered architecture, token resolution, agent design, extensibility |
+| [TDD](docs/specs/TDD.md) | Test Design — unit/integration/plugin/visual test cases, acceptance criteria |
+| [Agents](docs/agents.md) | Agent persona reference — backgrounds, responsibilities, dispatch flow |
+| [Customization](docs/customization.md) | Full customization guide — themes, agents, layouts, series, hooks |
+| [VS Methodology](docs/vs-methodology.md) | Verbalized Sampling explanation — T-Scores, integration points, anti-drift |
 
 ---
 
