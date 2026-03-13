@@ -1,0 +1,24 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "scopi-cardnews",
+  "description": "Professional card news generator — 7 expert agents, VS creative design, HTML → PNG → PDF pipeline",
+  "owner": {
+    "name": "Hosung You",
+    "email": "hosung.you@example.com"
+  },
+  "plugins": [
+    {
+      "name": "scopi-cardnews",
+      "description": "Card news generation pipeline with 7 expert-persona agents (NARA, GYEOL, GANA, DARI, BINNA, JURI, MARU), 4 visual themes, 9 slash commands, and VS creative methodology.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Hosung You",
+        "email": "hosung.you@example.com"
+      },
+      "source": "./",
+      "category": "productivity",
+      "homepage": "https://github.com/HosungYou/scopi-cardnews",
+      "tags": ["cardnews", "social-media", "design", "slides", "instagram", "linkedin", "puppeteer"]
+    }
+  ]
+}
