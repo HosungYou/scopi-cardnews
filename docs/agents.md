@@ -2,6 +2,8 @@
 
 Scopi Card News uses 7 expert agents, each with deep professional backgrounds that shape output quality.
 
+> **Note**: Agent personas are loaded from `agents/*.md` files in the plugin directory. To customize agents, see [Adding Custom Agents](#adding-custom-agents) below.
+
 ## Agent Overview
 
 | Agent | Korean | Role | Tools | Type |
@@ -151,3 +153,24 @@ tools:
 ```
 
 Then add the agent to `scopi.config.json` under `agents.custom` and re-run `/scopi:setup` to register it.
+
+### Where to Place Custom Agent Files
+
+- **Marketplace install**: Place custom agents in the plugin cache directory:
+  `~/.claude/plugins/marketplaces/HosungYou-scopi-cardnews/agents/`
+- **Local install**: Place in the cloned repository's `agents/` directory.
+- **Project-level**: You can also place agent files in your project's `agents/` directory and reference them in `scopi.config.json` under `agents.custom`.
+
+### Agent Dispatch Flow
+
+```
+/scopi:generate
+  → Phase 1: NARA dispatched (if active)
+  → Phase 3: BINNA dispatched (if active)
+  → Phase 4: GYEOL dispatched (if active)
+  → Phase 5: GANA dispatched (always required)
+  → Phase 6: JURI dispatched (if active, read-only)
+  → Phase 7: MARU dispatched (if active, read-only)
+```
+
+Custom agents can be wired into the pipeline by creating a custom skill that references them.

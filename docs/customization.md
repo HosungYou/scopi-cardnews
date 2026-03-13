@@ -1,10 +1,16 @@
 # Customization Guide
 
-Scopi Card News is designed for deep customization at every level.
+Scopi Card News is designed for deep customization at every level — themes, agents, layouts, series, dimensions, and pipeline settings.
+
+## Prerequisites
+
+- Plugin installed and enabled (`claude plugin list` should show `scopi-cardnews`)
+- `/scopi:setup` run at least once in your project directory (creates `scopi.config.json`)
+- `npm install` completed in the plugin directory (for Puppeteer rendering)
 
 ## Configuration (`scopi.config.json`)
 
-The config file controls all aspects of your card news generation:
+The config file controls all aspects of your card news generation. It is created by `/scopi:setup` and lives in your project root. It is gitignored by default — each project has its own config.
 
 ```json
 {
@@ -219,3 +225,38 @@ The `hooks/post-generate.sh` script runs after generation completes. Customize i
 - Upload to a CDN
 - Trigger a notification
 - Run additional processing
+
+## Marketplace Development
+
+If you've forked or cloned this plugin for development, you can test changes locally before publishing:
+
+```bash
+# Load your local copy for a single session
+claude --plugin-dir /path/to/your/scopi-cardnews
+
+# Validate plugin structure
+claude plugin validate /path/to/your/scopi-cardnews
+```
+
+### Publishing Your Fork as a Marketplace
+
+If you want to distribute a customized version:
+
+1. Push your fork to a public GitHub repository
+2. Ensure `.claude-plugin/marketplace.json` and `.claude-plugin/plugin.json` exist
+3. Users can add your marketplace:
+
+```bash
+claude plugin marketplace add YourGitHub/your-scopi-fork
+claude plugin install your-plugin-name@your-marketplace-name
+```
+
+### Updating the Plugin
+
+After pushing changes to GitHub:
+
+```bash
+# Users update via:
+claude plugin marketplace update scopi-cardnews
+claude plugin update scopi-cardnews
+```
