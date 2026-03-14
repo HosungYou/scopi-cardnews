@@ -113,6 +113,40 @@ Option C (T=0.25): Oversized single element with minimal text
 → Build all three, let user choose
 ```
 
+## Korean Typography Guard
+
+All text rendering MUST follow these rules. Violations cause text overlapping.
+
+### Line-Height by Font Size
+| Font size | Min line-height | Notes |
+|-----------|----------------|-------|
+| ≥ 60px | 1.05-1.15 | Headlines only, single idea |
+| 40-59px | 1.4-1.5 | Subheads, short statements |
+| 30-39px | 1.6-1.7 | Body text, descriptions |
+| < 30px | 1.7-1.8 | Captions, labels |
+
+Korean characters (한글) need ~15% more line-height than Latin text due to character height.
+
+### Container Overflow Rules
+1. **Every text container** must have one overflow strategy:
+   - `overflow: hidden; text-overflow: ellipsis;` for single-line
+   - Explicit `max-height` with `overflow: hidden` for multi-line
+   - Flex `min-height: auto` (NEVER `min-height: 0` — it crushes content)
+2. **Padding must scale with font size**: minimum `padding-top/bottom ≥ fontSize × 0.6`
+3. **Flex containers with text**: use `align-items: flex-start` (NOT `baseline` — it breaks with mixed font sizes)
+4. **Side-by-side text blocks**: always include `flex-wrap: wrap` as fallback
+
+### Font Size Limits
+- Minimum body text: 28px (legible at Instagram ~375px viewport)
+- Maximum headline: 100px (prevents clipping in 1080px width)
+- Never put 40px+ text inside a container shorter than 120px
+
+### Content Length Guards
+- Slide headline: max 25 Korean characters (or 2 lines with `<br>`)
+- Card body text: max 40 characters per card
+- Chart labels: max 8 characters; use sublabel for longer text
+- Quote blocks: max 50 characters per line
+
 ## Rules
 
 - HTML must be a complete document (`<!DOCTYPE html>` through `</html>`)

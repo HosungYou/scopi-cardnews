@@ -253,10 +253,309 @@ function createRenderer(opts = {}) {
         background: ${bg};
         display: flex; flex-direction: column;
         padding: ${S.padding};
+        position: relative;
+        overflow: hidden;
       ">
         ${content}
       </div>
     </body></html>`;
+  }
+
+  /** Horizontal bar chart — data visualization component */
+  function horizontalBarChart(items, opts = {}) {
+    // items: [{label, sublabel, value, maxValue, color, count}]
+    const maxVal = opts.maxValue || Math.max(...items.map(i => i.value));
+    const barHeight = opts.barHeight || '44px';
+    const labelWidth = opts.labelWidth || '180px';
+    const showCount = opts.showCount !== false;
+
+    return items.map(item => {
+      const pct = maxVal > 0 ? (item.value / maxVal * 100) : 0;
+      const barColor = item.color || D.accent;
+      const isEmpty = item.value === 0;
+
+      return `
+        <div style="
+          display: flex; align-items: center; gap: 16px;
+          margin-bottom: ${opts.gap || '12px'};
+        ">
+          <div style="
+            width: ${labelWidth}; flex-shrink: 0;
+            font-size: ${opts.labelSize || '36px'};
+            font-weight: 600;
+            color: ${D.textSecondary};
+            font-family: ${F.heading};
+            text-align: right;
+            line-height: 1.2;
+          ">
+            <div>${item.label}</div>
+            ${item.sublabel ? `<div style="font-size:${opts.sublabelSize || '28px'};color:${D.textTertiary};font-weight:500;">${item.sublabel}</div>` : ''}
+          </div>
+          <div style="
+            flex: 1; height: ${barHeight};
+            background: rgba(0,0,0,0.06);
+            border-radius: 22px;
+            overflow: hidden;
+            position: relative;
+          ">
+            ${isEmpty ? '' : `
+              <div style="
+                width: ${pct}%;
+                height: 100%;
+                background: ${barColor};
+                border-radius: 22px;
+                transition: width 0.3s;
+              "></div>
+            `}
+            ${isEmpty ? `
+              <div style="
+                position: absolute; top: 50%; left: 16px; transform: translateY(-50%);
+                font-size: 28px; color: ${D.textTertiary}; font-family: ${F.heading};
+              ">—</div>
+            ` : ''}
+          </div>
+          <div style="
+            width: ${opts.valueWidth || '120px'}; flex-shrink: 0;
+            text-align: right;
+          ">
+            <span style="
+              font-size: ${opts.valueSize || '40px'};
+              font-weight: 800;
+              color: ${item.color || D.accent};
+              font-family: ${F.heading};
+            ">${isEmpty ? '0%' : item.value + '%'}</span>
+            ${showCount && item.count ? `
+              <span style="
+                font-size: ${opts.countSize || '28px'};
+                font-weight: 600;
+                color: ${D.textSecondary};
+                font-family: ${F.heading};
+                margin-left: 8px;
+              ">${item.count}</span>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  /** Stat comparison — two or more big numbers side by side */
+  function statComparison(stats, opts = {}) {
+    // stats: [{value, label, color, bgColor}]
+    const gap = opts.gap || '24px';
+    const labelFontSize = parseInt(opts.labelSize || '32', 10);
+    const labelLH = labelFontSize >= 36 ? '1.4' : '1.5';
+
+    return `
+      <div style="display: flex; gap: ${gap}; flex-wrap: wrap; ${opts.style || ''}">
+        ${stats.map(s => `
+          <div style="
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+            padding: ${opts.padding || '36px 24px'};
+            background: ${s.bgColor || D.accentSoft};
+            border: 1.5px solid ${s.borderColor || D.accentBorder};
+            border-radius: ${opts.radius || '20px'};
+          ">
+            <div style="
+              font-size: ${opts.valueSize || '80px'};
+              font-weight: 900;
+              color: ${s.color || D.accent};
+              font-family: ${F.heading};
+              line-height: 1;
+              letter-spacing: -2px;
+            ">${s.value}</div>
+            <div style="
+              font-size: ${opts.labelSize || '32px'};
+              font-weight: 600;
+              color: ${s.labelColor || D.textSecondary};
+              font-family: ${F.heading};
+              margin-top: 12px;
+              line-height: ${labelLH};
+            ">${s.label}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  /** Three-column cards — for comparison layouts */
+  function threeColumnCards(cards, opts = {}) {
+    // cards: [{header, headerColor, headerBg, title, body, icon}]
+    const gap = opts.gap || '20px';
+    const bodyFontSize = parseInt(opts.bodySize || '36', 10);
+    const bodyLineHeight = bodyFontSize >= 40 ? '1.5' : '1.65';
+
+    return `
+      <div style="display: flex; flex-direction: ${opts.direction || 'column'}; gap: ${gap};">
+        ${cards.map(c => `
+          <div style="
+            flex: 1;
+            min-height: auto;
+            background: ${c.bg || D.cardBg};
+            border-radius: ${opts.radius || '20px'};
+            overflow: hidden;
+            border: 1.5px solid ${c.borderColor || 'rgba(0,0,0,0.06)'};
+          ">
+            <div style="
+              background: ${c.headerBg || D.accentSoft};
+              padding: 16px 28px;
+              display: flex; align-items: center; gap: 12px;
+              flex-wrap: wrap;
+              border-bottom: 1.5px solid ${c.borderColor || 'rgba(0,0,0,0.06)'};
+            ">
+              ${c.icon ? `<span style="font-size:24px;">${c.icon}</span>` : ''}
+              <span style="
+                font-size: ${opts.headerSize || '30px'};
+                font-weight: 700;
+                color: ${c.headerColor || D.accent};
+                font-family: ${F.heading};
+                letter-spacing: 1px;
+                text-transform: uppercase;
+              ">${c.header}</span>
+              ${c.title ? `
+                <span style="
+                  font-size: ${opts.titleSize || '30px'};
+                  font-weight: 600;
+                  color: ${D.textSecondary};
+                  font-family: ${F.heading};
+                  margin-left: 4px;
+                ">/ ${c.title}</span>
+              ` : ''}
+            </div>
+            <div style="padding: ${Math.round(bodyFontSize * 0.7)}px 28px;">
+              <p style="
+                font-size: ${opts.bodySize || '36px'};
+                color: ${D.textSecondary};
+                font-family: ${F.body};
+                line-height: ${bodyLineHeight};
+              ">${c.body}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  /** Editorial badge — marks content as editorial interpretation vs cited data */
+  function editorialBadge(label, mode = 'warm') {
+    const isAccent = mode === 'accent';
+    return `
+      <div style="
+        display: inline-flex; align-items: center; gap: 8px;
+        background: ${isAccent ? 'rgba(255,255,255,0.12)' : D.accentSoft};
+        border: 1.5px solid ${isAccent ? 'rgba(255,255,255,0.22)' : D.accentBorder};
+        border-radius: 40px;
+        padding: 8px 20px;
+      ">
+        <span style="
+          font-size: 26px; font-weight: 700;
+          color: ${isAccent ? 'rgba(255,255,255,0.7)' : D.accent};
+          font-family: ${F.heading};
+          letter-spacing: 1px;
+        ">${label || '스코피 해석'}</span>
+      </div>
+    `;
+  }
+
+  /** Data stamp — temporal attribution for data-driven slides */
+  function dataStamp(text, mode = 'warm') {
+    const isAccent = mode === 'accent';
+    const color = isAccent ? 'rgba(255,255,255,0.4)' : D.textTertiary;
+    return `
+      <p style="
+        font-size: 28px;
+        color: ${color};
+        font-family: ${F.heading};
+        font-weight: 500;
+        margin-top: ${S.gap};
+      ">${text}</p>
+    `;
+  }
+
+  /** Source citation block — for referencing papers/articles */
+  function sourceCitation(opts = {}) {
+    // opts: {doi, authors, journal, volume, year, mode}
+    const isAccent = (opts.mode || 'warm') === 'accent';
+    const bgColor = isAccent ? 'rgba(0,0,0,0.20)' : D.accentSoft;
+    const borderColor = isAccent ? 'rgba(255,255,255,0.12)' : D.accentBorder;
+    const textColor = isAccent ? 'rgba(255,255,255,0.55)' : D.textTertiary;
+    const doiColor = isAccent ? 'rgba(255,255,255,0.80)' : D.textSecondary;
+
+    return `
+      <div style="
+        padding: 24px 32px;
+        background: ${bgColor};
+        border-radius: ${S.borderRadiusSmall};
+        border: 1px solid ${borderColor};
+      ">
+        ${opts.doi ? `
+          <p style="font-size:28px;color:${textColor};font-family:${F.heading};font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">DOI</p>
+          <p style="font-size:32px;color:${doiColor};font-family:${F.code};letter-spacing:0.5px;margin-bottom:12px;">${opts.doi}</p>
+        ` : ''}
+        ${opts.authors ? `
+          <p style="font-size:30px;color:${textColor};font-family:${F.heading};font-weight:500;">
+            ${opts.authors}${opts.year ? ` (${opts.year})` : ''}${opts.journal ? `. ${opts.journal}` : ''}${opts.volume ? `, Vol. ${opts.volume}` : ''}.
+          </p>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  /** Progress bars — for showing proportional data without axes */
+  function progressBars(items, opts = {}) {
+    // items: [{label, value, color, sublabel}]
+    const maxVal = opts.maxValue || 100;
+    const labelFontSize = parseInt(opts.labelSize || '38', 10);
+    const labelLH = labelFontSize >= 40 ? '1.3' : '1.5';
+
+    return items.map(item => `
+      <div style="margin-bottom: ${opts.gap || '16px'};">
+        <div style="
+          display: flex; justify-content: space-between; align-items: flex-start;
+          margin-bottom: 8px;
+          flex-wrap: wrap;
+        ">
+          <span style="
+            font-size: ${opts.labelSize || '38px'};
+            font-weight: 700;
+            color: ${opts.labelColor || D.textPrimary};
+            font-family: ${F.heading};
+            line-height: ${labelLH};
+          ">${item.label}</span>
+          <span style="
+            font-size: ${opts.valueSize || '38px'};
+            font-weight: 800;
+            color: ${item.color || D.accent};
+            font-family: ${F.heading};
+            line-height: ${labelLH};
+          ">${item.value}%</span>
+        </div>
+        <div style="
+          width: 100%; height: ${opts.barHeight || '16px'};
+          background: rgba(0,0,0,0.06);
+          border-radius: 8px;
+          overflow: hidden;
+        ">
+          <div style="
+            width: ${(item.value / maxVal) * 100}%;
+            height: 100%;
+            background: ${item.color || D.accent};
+            border-radius: 8px;
+            opacity: ${item.opacity || 1};
+          "></div>
+        </div>
+        ${item.sublabel ? `
+          <p style="
+            font-size: 28px; color: ${D.textTertiary};
+            font-family: ${F.heading}; font-weight: 500;
+            margin-top: 6px;
+            line-height: 1.5;
+          ">${item.sublabel}</p>
+        ` : ''}
+      </div>
+    `).join('');
   }
 
   return {
@@ -271,6 +570,14 @@ function createRenderer(opts = {}) {
     card,
     numberBadge,
     slideWrapper,
+    // New P0 components:
+    horizontalBarChart,
+    statComparison,
+    threeColumnCards,
+    editorialBadge,
+    dataStamp,
+    sourceCitation,
+    progressBars,
   };
 }
 

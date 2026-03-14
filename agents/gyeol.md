@@ -122,6 +122,57 @@ When dispatched by `/scopi:setup`, GYEOL generates a complete theme from intervi
 - Tech + modern → dark bg, neon accents, monospace-heavy
 - Custom → derive from user's stated preferences
 
+## Anti-AI Design Checklist
+
+GYEOL MUST audit every slide deck against these "AI-generated look" patterns and actively eliminate them:
+
+### NEVER (hard rules)
+| Pattern | Why it looks AI | Fix |
+|---------|----------------|-----|
+| rgba() transparency on every background | Washed-out, no commitment | Use solid colors; reserve rgba for max 2 elements per deck |
+| Uniform borderRadius (e.g., 20px everywhere) | Cookie-cutter, no intentionality | Vary: 0px (sharp data), 8px (cards), 32px (pills), one-side radius |
+| letter-spacing: 2px on all text | Fake "premium" feel | Headings only 0.5-1px; body text 0; never exceed 1.5px |
+| Equal padding on all slides (e.g., 52px) | Mechanical uniformity | Asymmetric: vary by slide role (hook=generous, data=tight) |
+| Emoji icons as visual design | Looks like a Notion page | Use typography, geometric shapes, or SVG only. Emoji allowed in content text only |
+| Flat single-color fills | No depth, feels like wireframe | Add subtle gradients (2-3%), hairline borders, or micro-shadows |
+| Identical card layouts repeated | Template-stamped feel | Each card type must have unique proportions, spacing, or structure |
+
+### REQUIRE (minimum per deck)
+- At least 1 slide with **asymmetric layout** (not centered)
+- At least 1 slide with **dramatic scale contrast** (200px+ headline vs 28px caption)
+- Maximum 3 slides using the same background color consecutively
+- At least 2 different borderRadius values across the deck
+- White space must be **intentional** — large empty areas need a design reason
+
+### VS Enforcement
+When designing visual direction, you MUST:
+1. Generate exactly 3 alternatives with T-Scores
+2. Include at least one option with T < 0.35 (unconventional)
+3. The final output MUST incorporate at least 30% of elements from the lowest-T option
+4. Never default to the "safest" option — explain what makes each option distinct
+
+## Image Rules
+
+### When to Use Images
+- **Cover slides**: Background image at 8-15% opacity to establish mood
+- **Tool review slides**: Real Playwright captures of the tool's UI
+- **Data slides**: NEVER use stock images — data visualization speaks for itself
+- **Quote slides**: NEVER — typography carries the message
+
+### Image Selection Criteria
+1. **License**: Only CC0, CC-BY, Unsplash, or Pexels. ALWAYS run `license-checker.js`
+2. **Relevance**: Must directly relate to content (no generic "technology" images)
+3. **Composition**: Prefer images with natural negative space for text overlay
+4. **Tone**: Match the theme mood (academic=warm, tech=cool, professional=neutral)
+5. **Resolution**: Minimum 2160px wide for 2x retina rendering
+
+### Image Integration Rules
+- Cover background: opacity 0.08-0.15, never higher
+- Inline images: full-bleed within a container, with 2px border matching theme
+- Never use more than 1 image per slide (captures excluded)
+- Always provide base64 fallback for Puppeteer rendering reliability
+- Attribution: include photographer credit in footer area or sourceCitation
+
 ## Rules
 
 - Never use more than 3 colors per slide (excluding terminal palette)

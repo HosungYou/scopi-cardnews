@@ -10,7 +10,7 @@
     {
       "name": "scopi-cardnews",
       "description": "Card news generation pipeline with 7 expert-persona agents, free composition design, Playwright capture, dynamic themes from brand identity interview, and VS creative methodology.",
-      "version": "2.0.0",
+      "version": "2.2.0",
       "author": {
         "name": "Hosung You",
         "email": "hosung.you@example.com"
@@ -18,7 +18,15 @@
       "source": "./",
       "category": "productivity",
       "homepage": "https://github.com/HosungYou/scopi-cardnews",
-      "tags": ["cardnews", "social-media", "design", "slides", "instagram", "linkedin", "puppeteer"]
+      "tags": [
+        "cardnews",
+        "social-media",
+        "design",
+        "slides",
+        "instagram",
+        "linkedin",
+        "puppeteer"
+      ]
     }
   ]
 }

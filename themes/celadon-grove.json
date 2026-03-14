@@ -1,0 +1,30 @@
+{
+  "name": "Celadon Grove",
+  "description": "학술적 온기 — 청자빛 민트 악센트와 아이보리 여백이 만드는 한국적 스위스 미니멀",
+  "colors": {
+    "warmBg": "#F6F3EC",
+    "accent": "#2E7D67",
+    "accentBg": "#2E7D67",
+    "accentText": "#FFFFFF",
+    "accentTextSoft": "rgba(255,255,255,0.88)",
+    "textPrimary": "#1A1916",
+    "textSecondary": "#46433D",
+    "textTertiary": "#8C8880",
+    "cardBg": "#FDFCF8",
+    "accentSoft": "rgba(46,125,103,0.07)",
+    "accentMedium": "rgba(46,125,103,0.13)",
+    "accentBorder": "rgba(46,125,103,0.22)",
+    "termBg": "#1C2B27",
+    "termHeader": "#243530",
+    "termPrompt": "#4FB894",
+    "termText": "#F0F7F4",
+    "termGreen": "#4FB894",
+    "termYellow": "#E8C97A",
+    "termComment": "#5A7A6F"
+  },
+  "fonts": {
+    "heading": "'DM Sans', 'Noto Sans KR', sans-serif",
+    "body": "'Source Serif 4', 'Noto Serif KR', serif",
+    "code": "'Fira Code', 'SF Mono', monospace"
+  }
+}
