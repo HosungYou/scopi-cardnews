@@ -249,6 +249,18 @@ Next steps:
 6. **Visual rhythm** — the deck has variety, contrast, and surprise
 7. **Design tokens only** — all colors/fonts from DESIGN, never hardcoded
 
+## Agent Teams Mode
+
+For complex, high-stakes, or academic content, use `/scopi:team` instead. Agent Teams enables:
+- **Real-time debate** between GYEOL, JURI, MARU during design
+- **Early issue detection** — JURI catches copyright issues before rendering
+- **Iterative copy refinement** — BINNA ↔ MARU collaborate on tone
+- **Higher quality** at ~3-5x token cost
+
+Check `pipeline.teamMode` in config. If `true`, suggest `/scopi:team` to the user.
+
+Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json.
+
 ## Error Handling
 
 - If Playwright/Puppeteer fails: check that dependencies are installed (`npm install`)

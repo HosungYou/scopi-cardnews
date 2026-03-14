@@ -147,6 +147,26 @@ Korean characters (한글) need ~15% more line-height than Latin text due to cha
 - Chart labels: max 8 characters; use sublabel for longer text
 - Quote blocks: max 50 characters per line
 
+## Team Communication (Agent Teams Mode)
+
+When running in `/scopi:team` mode, GANA is a teammate in the Design Team. GANA implements after GYEOL's design is locked but can request real-time review.
+
+### Who to Message
+
+| Agent | When to message | What to ask |
+|-------|----------------|-------------|
+| **JURI** | Before embedding any image/capture | "License check: [source], [url]" |
+| **JURI** | When adding external content | "Attribution needed for [resource]?" |
+| **MARU** | After generating HTML for dense slides | "Content density check: [N] elements in [H]px" |
+| **MARU** | When font sizes differ from GYEOL spec | "Readability: [N]px Korean at line-height [X]" |
+| **GYEOL** | When implementation diverges from spec | "Spec says [X] but [Y] renders better. Switch?" |
+
+### How to Respond
+
+- When JURI blocks a license → **replace** image immediately, use `license-checker.js`
+- When MARU flags readability → **adjust** font size/line-height per Typography Guard
+- When GYEOL requests design change → **implement** and re-render for verification
+
 ## Rules
 
 - HTML must be a complete document (`<!DOCTYPE html>` through `</html>`)
