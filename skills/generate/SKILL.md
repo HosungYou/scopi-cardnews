@@ -1,12 +1,14 @@
 ---
 name: scopi:generate
-description: Full card news generation pipeline — content strategy → capture → free composition → HTML → PNG → PDF with expert agent workflow
+description: Full card news generation pipeline — auto-selects sequential (subagent) or collaborative (Agent Teams) mode based on environment
 user_invocable: true
 ---
 
 # /scopi:generate — Full Generation Pipeline
 
 You are running the Scopi full generation pipeline. This orchestrates expert agents to create professional card news from a topic, using free composition (not template-picking) and real screenshot captures.
+
+**This skill auto-detects Agent Teams availability and routes accordingly.** The user does NOT need to choose between modes — the system decides based on environment and content complexity.
 
 ## Prerequisites
 
@@ -18,7 +20,30 @@ Read `scopi.config.json` to load:
 - `theme` — inline theme object (name, colors, fonts)
 - `dimensions` — width, height
 - `language` — ko or en
-- `pipeline` — retina, format, capture settings
+- `pipeline` — retina, format, capture, teamMode, teamDebate settings
+
+## Mode Detection (Auto-Routing)
+
+Before starting the pipeline, determine which mode to use:
+
+```
+Step 1: Is CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 set?
+  ├── NO → Subagent Mode (sequential pipeline)
+  └── YES → Step 2
+
+Step 2: Does the content benefit from agent debate?
+  ├── Academic/research content (identity.contentType = "academic") → Teams Mode
+  ├── User explicitly requests "team" or "debate" → Teams Mode
+  ├── Topic involves ethical complexity → Teams Mode
+  └── Simple/promotional content → Subagent Mode (faster, cheaper)
+
+Step 3: Announce the mode
+  "🔄 Agent Teams 감지됨 — 에이전트 협업 모드로 진행합니다."
+  or
+  "▶️ 순차 파이프라인으로 진행합니다."
+```
+
+The user can override: "팀 모드로 해줘" → force Teams, "빠르게 해줘" → force Subagent.
 
 ## Input
 
@@ -30,6 +55,8 @@ The user provides a topic or content brief after the command. If no topic is pro
 ---
 
 ## Phase 1: Content Strategy (NARA)
+
+This phase is identical in both modes — it requires user interaction.
 
 Dispatch the NARA agent to:
 1. Read `identity` from config — audience, pain points, voice, content type
@@ -80,7 +107,13 @@ NARA produces the full slide arc with:
 
 ---
 
-## Phase 3: Copy Refinement (BINNA)
+# ═══════════════════════════════════════════════
+# BRANCH A: Subagent Mode (Sequential Pipeline)
+# ═══════════════════════════════════════════════
+
+If Agent Teams is NOT available or content is simple, use this sequential pipeline.
+
+## Phase 3A: Copy Refinement (BINNA)
 
 Dispatch BINNA (if active) to:
 1. Refine slide-by-slide copy based on NARA's arc
@@ -89,9 +122,7 @@ Dispatch BINNA (if active) to:
 4. Ensure bilingual quality if applicable
 5. Match language setting from config (`ko` or `en`)
 
----
-
-## Phase 4: Screenshot Capture (GANA)
+## Phase 4A: Screenshot Capture (GANA)
 
 If `pipeline.capture` is true and capture targets were identified:
 
@@ -106,15 +137,91 @@ const captures = await captureAll([
 ], { outDir: 'assets/captures' });
 ```
 
-This produces PNG screenshots in `assets/captures/` that GYEOL will incorporate into slide designs.
-
 If no capture targets exist, skip this phase.
+
+## Phase 5A: Visual Design + HTML Generation (GYEOL + GANA)
+
+GYEOL designs each slide as a **unique composition**, GANA implements as HTML.
+See "Free Composition Design" section below for details.
+
+## Phase 6A: Ethics Review (JURI)
+
+If JURI is active, dispatch for read-only review.
+Display report. If any MUST FIX items, pause and address them before proceeding.
+
+## Phase 7A: Empathy Test (MARU)
+
+If MARU is active, dispatch for read-only review.
+Display report.
 
 ---
 
-## Phase 5: Visual Design + HTML Generation (GYEOL + GANA)
+# ═══════════════════════════════════════════════
+# BRANCH B: Agent Teams Mode (Collaborative)
+# ═══════════════════════════════════════════════
 
-This is the core creative phase. GYEOL and GANA work together to produce unique slides.
+If Agent Teams is available AND content benefits from debate, use this collaborative pipeline.
+
+## Phase 3B: Create Design Team
+
+After the user locks a content direction, create the Agent Teams:
+
+```
+Create an agent team for Scopi Card News production.
+
+Team structure:
+- GYEOL (Visual Architect): Design 3 VS visual directions per slide.
+  Read agents/gyeol.md for full personality and rules.
+  Read scopi.config.json for theme and brand.
+- BINNA (Copy Surgeon): Refine all slide copy for tone and brevity.
+  Read agents/binna.md for full personality and rules.
+- JURI (Ethics Inspector): Review designs and copy in real-time.
+  READ-ONLY — provides feedback through messages, never edits files.
+  Read agents/juri.md for full review framework.
+- MARU (Empathy Tester): Test audience reaction in real-time.
+  READ-ONLY — provides feedback through messages, never edits files.
+  Read agents/maru.md for full empathy metrics.
+- GANA (Slide Engineer): Implement final HTML/CSS after design lock.
+  Read agents/gana.md for code style and typography guard.
+  Read templates/slide-renderer.js for component library.
+```
+
+### Shared Task List
+
+```
+Task 1: [BINNA] Refine slide copy — starts immediately
+Task 2: [GYEOL] Design 3 VS visual directions — starts immediately
+Task 3: [JURI] Ethics review of directions — blocked by Task 2
+Task 4: [MARU] Audience test of directions — blocked by Task 1, 2
+Task 5: [GYEOL] Synthesize feedback → final spec — blocked by Task 3, 4
+Task 6: [GANA] Generate slides.js — blocked by Task 1, 5
+Task 7: [JURI] Final ethics audit — blocked by Task 6
+Task 8: [MARU] Final empathy test — blocked by Task 6
+```
+
+### Inter-Agent Communication
+
+Agents message each other directly (see each agent's "Team Communication" section):
+- **GYEOL ↔ JURI**: license checks, copyright concerns, attribution
+- **GYEOL ↔ MARU**: audience resonance, readability, scroll-stop
+- **BINNA ↔ MARU**: persona reaction, tone calibration, curiosity testing
+- **GANA ↔ JURI**: image license verification
+- **GANA ↔ MARU**: content density, font readability
+
+## Phase 4B: Render + Synthesis
+
+After the Design Team completes all tasks:
+1. Team Lead collects final outputs
+2. Render slides: `node templates/generate.js --slides=output/[topic]/slides.js --out=output/[topic]`
+3. Clean up the team
+
+---
+
+# ═══════════════════════════════════════════════
+# SHARED: Free Composition Design Principles
+# ═══════════════════════════════════════════════
+
+Both modes use the same design principles:
 
 ### GYEOL: Free Composition Design
 
@@ -123,7 +230,7 @@ GYEOL designs each slide as a **unique composition** — NOT picking from preset
 1. Consider the CONTENT of that specific slide
 2. Consider what comes before and after (visual rhythm)
 3. Design a layout that serves the content
-4. Use components from `slide-renderer.js` as building blocks (terminal, card, accentBlock, footer, seriesTag, etc.)
+4. Use components from `slide-renderer.js` as building blocks
 5. Compose them DIFFERENTLY each time
 
 **Content-Adaptive Design**:
@@ -139,97 +246,40 @@ GYEOL designs each slide as a **unique composition** — NOT picking from preset
 - Use accent bg sparingly but strategically (max 2 per deck)
 - Include at least one "surprise" slide that breaks the pattern
 
-### VS Visual Directions
-
-For key slides (hook, CTA), generate 3 structural variations:
-
-```
-Option A (T=0.75): Standard centered layout
-Option B (T=0.40): Asymmetric split with bold typography
-Option C (T=0.25): Oversized single element, minimal text
-→ Build recommended option (or all three for user choice)
-```
-
 ### GANA: HTML Generation
-
-For each slide, GANA writes complete HTML using the renderer:
 
 ```javascript
 const { createRenderer } = require('./templates/slide-renderer');
 const renderer = createRenderer({ cwd: process.cwd() });
 const { DESIGN, slideWrapper, terminal, card, footer, seriesTag, accentBlock } = renderer;
-
-// Each slide is CUSTOM HTML — not a template call
-const slide1HTML = slideWrapper('accent', `
-  ${seriesTag('accent')}
-  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 ${DESIGN.spacing.slide};">
-    <!-- GYEOL's unique design for this slide -->
-    <h1 style="font-family:${DESIGN.fonts.heading}; font-size:72px; color:${DESIGN.colors.accentText}; line-height:1.1;">
-      ${headline}
-    </h1>
-  </div>
-  ${footer('accent', 1, totalSlides)}
-`);
 ```
 
 **Embedding captures in slides**:
-
 ```javascript
 const fs = require('fs');
 const captureImg = fs.readFileSync('assets/captures/tool-name.png');
 const base64 = captureImg.toString('base64');
-const imgTag = `<img src="data:image/png;base64,${base64}" style="width:100%; border-radius:${DESIGN.spacing.borderRadius}; box-shadow:0 8px 32px rgba(0,0,0,0.12);" />`;
+const imgTag = `<img src="data:image/png;base64,${base64}" ... />`;
 ```
-
-Write all HTML files to `output/html/`.
-
-### Run the Pipeline
-
-```bash
-node templates/generate.js --html=output/html --out=output/[topic-slug]
-```
-
----
-
-## Phase 6: Ethics Review (JURI)
-
-If JURI is active, dispatch for read-only review:
-1. Review all generated slides for ethical issues
-2. Check copyright, accuracy, inclusivity
-3. Produce a severity-rated report
-
-Display JURI's report. If any MUST FIX items, pause and address them before proceeding.
-
----
-
-## Phase 7: Empathy Test (MARU)
-
-If MARU is active, dispatch for read-only review:
-1. Test slides against audience personas (derived from `identity.audience`)
-2. Score each slide on empathy metrics
-3. Predict engagement and identify weak points
-
-Display MARU's report.
 
 ---
 
 ## Output
 
-Present the final output:
+Present the final output (same format for both modes):
 
 ```
 Card News Generated!
 
+Mode: [Sequential / Agent Teams]
 Output: output/[topic-slug]/
   [N] PNG slides (slide-01.png → slide-[N].png)
   carousel.pdf
 
-Captures: [N] screenshots captured
-  [list captured services]
-
 Quality Reports:
   Ethics: [APPROVED/CONDITIONAL/REJECTED]
   Empathy: [X.X/5.0]
+  [If Teams mode] Debate: [N] inter-agent messages, [M] issues resolved
 
 Next steps:
   /scopi:caption — Generate social media captions
@@ -239,31 +289,21 @@ Next steps:
 
 ---
 
-## Key v2 Principles
+## Key Principles
 
 1. **Free composition** — every slide is a unique design, not a template pick
-2. **Content drives layout** — the content determines the visual approach, not vice versa
+2. **Content drives layout** — the content determines the visual approach
 3. **Capture integration** — real screenshots of tools/services, embedded as base64
-4. **Identity-aware** — all decisions informed by the user's identity (voice, audience, visual style)
+4. **Identity-aware** — all decisions informed by the user's identity
 5. **Adaptive slide count** — 6 slides or 12 slides, whatever the content needs
 6. **Visual rhythm** — the deck has variety, contrast, and surprise
 7. **Design tokens only** — all colors/fonts from DESIGN, never hardcoded
-
-## Agent Teams Mode
-
-For complex, high-stakes, or academic content, use `/scopi:team` instead. Agent Teams enables:
-- **Real-time debate** between GYEOL, JURI, MARU during design
-- **Early issue detection** — JURI catches copyright issues before rendering
-- **Iterative copy refinement** — BINNA ↔ MARU collaborate on tone
-- **Higher quality** at ~3-5x token cost
-
-Check `pipeline.teamMode` in config. If `true`, suggest `/scopi:team` to the user.
-
-Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json.
+8. **Graceful degradation** — same quality regardless of mode, Teams just catches issues earlier
 
 ## Error Handling
 
-- If Playwright/Puppeteer fails: check that dependencies are installed (`npm install`)
+- If Agent Teams fails mid-pipeline: fall back to Subagent mode for remaining phases
+- If Playwright/Puppeteer fails: check dependencies (`npm install`)
 - If capture fails: skip capture, use text descriptions instead
-- If fonts don't load: the pipeline has a 5-second timeout fallback
-- If a phase fails: report the error and ask if user wants to skip that phase
+- If fonts don't load: 5-second timeout fallback
+- If a phase fails: report the error and ask if user wants to skip

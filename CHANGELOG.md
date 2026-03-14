@@ -5,21 +5,22 @@ All notable changes to Scopi Card News will be documented in this file.
 ## [2.3.0] — 2026-03-14
 
 ### Added
-- **`/scopi:team` skill** — Agent Teams generation pipeline using Claude Code's experimental Agent Teams feature. Enables real-time inter-agent debate, shared task lists, and collaborative design refinement.
+- **Agent Teams auto-routing in `/scopi:generate`** — Single command auto-detects Agent Teams availability and content complexity to choose sequential (subagent) or collaborative (Teams) mode. No separate command needed.
+- **`/scopi:setup` Step 10: Agent Teams opt-in** — Setup wizard now asks whether to enable Agent Teams. If user agrees, auto-configures `settings.json` with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`.
 - **Team Communication protocols** for all 5 Design Team agents:
   - **GYEOL**: Messages JURI for license checks, MARU for audience testing, BINNA for copy constraints
-  - **GANA**: Messages JURI for license verification, MARU for readability checks, GYEOL for spec clarification
+  - **GANA**: Messages JURI for license verification, MARU for readability checks
   - **BINNA**: Messages MARU for persona reaction testing, GYEOL for layout accommodation
-  - **JURI**: Proactive real-time ethics review during design (not just post-hoc). Veto power on 🔴 MUST FIX items.
+  - **JURI**: Proactive real-time ethics review during design (not just post-hoc). Veto power on 🔴 items.
   - **MARU**: Proactive real-time empathy testing during creation. Authority on audience reception.
-- **Debate Protocol** — Formal rules for inter-agent disagreement resolution (JURI owns ethics, MARU owns empathy, GYEOL owns aesthetics, BINNA owns word choice)
-- **Pipeline config** — `teamMode`, `teamDisplay`, `teamDebate` options in `scopi.config.json`
-- **`/scopi:generate` team reference** — Suggests `/scopi:team` when `pipeline.teamMode` is true
+- **Debate Protocol** — Formal rules for inter-agent disagreement resolution
+- **Graceful degradation** — Same skill file auto-branches. If Teams fails mid-pipeline, falls back to subagent for remaining phases.
 
 ### Architecture
-- **Subagent mode** (`/scopi:generate`): Sequential pipeline, each agent reports back to main. Lower token cost, faster.
-- **Teams mode** (`/scopi:team`): Parallel Design Team with messaging. JURI/MARU intervene during design, not after. Higher quality, ~3-5x tokens.
-- **Shared Task List**: 8 tasks with dependencies (copy → design → ethics review → empathy test → implementation → final audit)
+- **`/scopi:generate` Branch A** (Subagent): Sequential pipeline, lower cost, faster
+- **`/scopi:generate` Branch B** (Teams): Parallel Design Team with messaging, higher quality, ~3-5x tokens
+- **Auto-detection**: Academic content + Teams enabled → Branch B. Simple content → Branch A.
+- **`/scopi:team`** converted to internal reference (non-user-invocable)
 - **Requires**: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings + Claude Code v2.1.32+
 
 ## [2.2.0] — 2026-03-14

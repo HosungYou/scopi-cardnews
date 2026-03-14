@@ -19,8 +19,8 @@ Display this banner:
   ║        ────────────────────────────           ║
   ║        Navigate your story.                  ║
   ║                                              ║
-  ║        v2.0 · 7 Expert Agents                ║
-  ║        Powered by VS Creative Design         ║
+  ║        v2.3 · 7 Expert Agents                ║
+  ║        VS Design + Agent Teams               ║
   ║                                              ║
   ╚══════════════════════════════════════════════╝
 ```
@@ -213,7 +213,51 @@ Set dimensions accordingly. Store as `platform` and `dimensions`.
 
 ---
 
-## Step 10: Dynamic Theme Generation (GYEOL)
+## Step 10: Agent Teams (Optional)
+
+Use AskUserQuestion:
+
+**Korean**:
+> **에이전트 팀 모드를 활성화할까요?**
+>
+> 활성화하면 카드뉴스 생성 시 에이전트들이 실시간으로 토론하며 품질을 높입니다.
+> (예: GYEOL이 디자인하면 JURI가 즉시 저작권 확인, MARU가 독자 반응 예측)
+>
+> - 토큰 비용 ~3-5배 증가
+> - 학술/연구 콘텐츠에 특히 유용
+> - Claude Code v2.1.32+ 필요
+>
+> 1. 활성화 (추천: 학술 콘텐츠)
+> 2. 건너뛰기 (일반 순차 파이프라인 사용)
+
+**English**:
+> **Enable Agent Teams mode?**
+>
+> When enabled, agents debate and refine each other's work in real-time.
+> (e.g., GYEOL designs → JURI checks copyright immediately → MARU predicts audience reaction)
+>
+> - Token cost ~3-5x higher
+> - Especially useful for academic/research content
+> - Requires Claude Code v2.1.32+
+>
+> 1. Enable (recommended for academic content)
+> 2. Skip (use standard sequential pipeline)
+
+If the user chooses 1:
+1. Check if `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is already set in `~/.claude/settings.json`
+2. If NOT set, ask: "settings.json에 Agent Teams 플래그를 추가할까요? (한 번만 설정하면 됩니다)"
+3. If user agrees, read `~/.claude/settings.json`, add `"env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" }` to it, and write back
+4. Store `pipeline.teamMode = true` in config
+
+If the user chooses 2:
+- Store `pipeline.teamMode = false` in config
+- The pipeline will always use sequential subagent mode
+
+Note: Even with `teamMode = true`, `/scopi:generate` auto-detects the best mode per content. Simple topics still use the faster sequential pipeline.
+
+---
+
+## Step 11: Dynamic Theme Generation (GYEOL)
 
 Now, based on ALL the interview answers, dispatch GYEOL (Visual Architect) to generate a unique theme.
 
@@ -273,7 +317,7 @@ If user wants changes, GYEOL adjusts. If yes, proceed.
 
 ---
 
-## Step 11: Generate Config
+## Step 12: Generate Config
 
 Write `scopi.config.json` with the FULL interview data:
 
@@ -306,14 +350,19 @@ Write `scopi.config.json` with the FULL interview data:
   "pipeline": {
     "retina": true,
     "format": ["png", "pdf"],
-    "capture": true
+    "capture": true,
+    "teamMode": false,
+    "teamDisplay": "auto",
+    "teamDebate": true,
+    "strictQA": true,
+    "minQAScore": 3.0
   }
 }
 ```
 
 ---
 
-## Step 12: Confirmation
+## Step 13: Confirmation
 
 **Korean**:
 ```
@@ -325,11 +374,12 @@ Write `scopi.config.json` with the FULL interview data:
      테마: [theme name] — [description]
      플랫폼: [platform] ([width]×[height])
      에이전트: 7명 활성
+     팀 모드: [활성/비활성] — [활성 시: "에이전트 실시간 토론"]
      캡처 대상: [count]개 등록
 
   🚀 시작할 준비가 됐습니다!
      /scopi:content  — 콘텐츠 아이디어 브레인스토밍
-     /scopi:generate — 카드뉴스 생성 (전체 파이프라인)
+     /scopi:generate — 카드뉴스 생성 (자동 모드 감지)
      /scopi:help     — 전체 명령어 보기
 ```
 

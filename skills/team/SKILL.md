@@ -1,43 +1,12 @@
 ---
 name: scopi:team
-description: Agent Teams mode — multi-agent collaboration with real-time debate, shared tasks, and inter-agent messaging for card news generation
-user_invocable: true
+description: Agent Teams reference — detailed inter-agent communication protocols and task architecture (auto-invoked by /scopi:generate when Agent Teams is available)
+user_invocable: false
 ---
 
-# /scopi:team — Agent Teams Generation Pipeline
+# Agent Teams — Reference Architecture
 
-You are running the Scopi Agent Teams pipeline. This uses Claude Code's experimental Agent Teams feature to create a collaborative team where agents **debate, challenge, and refine** each other's work in real-time — unlike the sequential subagent pipeline (`/scopi:generate`).
-
-## Prerequisites
-
-1. **Agent Teams must be enabled**. Check if `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is set:
-   ```json
-   // ~/.claude/settings.json
-   { "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" } }
-   ```
-   If not enabled, tell the user and offer to set it up.
-
-2. **Claude Code v2.1.32+** required. Check with `claude --version`.
-
-3. Read `scopi.config.json` for brand, identity, theme, dimensions, pipeline settings.
-
-## When to Use Teams vs Generate
-
-| Use `/scopi:team` when... | Use `/scopi:generate` when... |
-|---|---|
-| Complex topic needing debate | Simple, clear-cut content |
-| Academic rigor required | Quick promotional card news |
-| Multiple ethical considerations | Low-risk topic |
-| User wants agent collaboration visible | User wants fast, autonomous output |
-| Design quality is critical | Iterating on existing content |
-
-## Input
-
-Same as `/scopi:generate`:
-- `/scopi:team [topic]` — generate card news with team collaboration
-- `/scopi:team` — prompt for topic
-
----
+This document defines the inter-agent communication protocols, task dependencies, and debate rules used by `/scopi:generate` when Agent Teams mode is active. It is NOT invoked directly — `/scopi:generate` auto-detects and routes here.
 
 ## Architecture: Subagents vs Agent Teams
 
@@ -258,43 +227,10 @@ After the Design Team completes all tasks:
 
 ---
 
-## Configuration
+## Mode Comparison
 
-Add to `scopi.config.json`:
-
-```json
-{
-  "pipeline": {
-    "teamMode": true,
-    "teamSize": 5,
-    "teamDisplay": "auto",
-    "teamDebate": true
-  }
-}
-```
-
-| Option | Default | Description |
-|--------|---------|-------------|
-| `teamMode` | `false` | Enable Agent Teams pipeline |
-| `teamSize` | `5` | Number of teammates (GYEOL, BINNA, JURI, MARU, GANA) |
-| `teamDisplay` | `"auto"` | `"auto"`, `"in-process"`, or `"tmux"` |
-| `teamDebate` | `true` | Allow inter-agent messaging (if false, sequential like subagents) |
-
----
-
-## Fallback
-
-If Agent Teams is not enabled or fails:
-1. Warn the user that Teams mode is unavailable
-2. Offer to fall back to `/scopi:generate` (sequential subagent mode)
-3. All content and quality remains identical — only the collaboration style differs
-
----
-
-## Key Differences from /scopi:generate
-
-| Aspect | /scopi:generate | /scopi:team |
-|--------|----------------|-------------|
+| Aspect | Subagent (Branch A) | Teams (Branch B) |
+|--------|-------------------|-----------------|
 | Agent communication | None (sequential) | Real-time messaging |
 | JURI/MARU timing | Post-hoc review only | Real-time during design |
 | Design iterations | 0 (first output is final) | 2-3 rounds from feedback |
@@ -302,4 +238,4 @@ If Agent Teams is not enabled or fails:
 | Token cost | Lower | ~3-5x higher |
 | Quality | Good | Higher (issues caught earlier) |
 | Speed | Faster | Slower (debate takes time) |
-| Best for | Routine content | Complex/academic/high-stakes |
+| Auto-selected when | Simple content, Teams unavailable | Academic content, Teams enabled |
