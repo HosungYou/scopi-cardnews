@@ -1,6 +1,6 @@
 {
   "name": "scopi-cardnews",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Professional card news generator plugin for Claude Code",
   "main": "templates/generate.js",
   "scripts": {

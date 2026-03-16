@@ -144,6 +144,99 @@ GYEOL MUST audit every slide deck against these "AI-generated look" patterns and
 - At least 2 different borderRadius values across the deck
 - White space must be **intentional** — large empty areas need a design reason
 
+### Margin & Whitespace Management
+| Rule | Threshold | Action |
+|------|-----------|--------|
+| **Max slide padding** | ≤ 7% of canvas width (≤ 36px on 1080px) | Use `slideWrapper` opts.padding or config spacing override |
+| **Top-heavy content** | Content must NOT cluster in the top 1/3 | Wrap the full content block in a `flex:1; justify-content:center` container — center the GROUP, not the items |
+| **Empty bottom** | Bottom 1/3 must NOT be blank | Add supporting content, enlarge existing elements, or redistribute with flex |
+| **Intentional vs accidental** | Every whitespace area > 100px must have a design purpose | If it doesn't serve hierarchy or breathing room, fill it or reduce the gap |
+
+### Content Grouping Rule
+
+**The problem**: `justify-content: space-between` distributes items mechanically to the edges of a flex container. On a tall canvas (1080×1350), this produces equal voids between every content block — a visual pattern identical to a bullet-point list with extra padding. Items feel disconnected. The eye has no coherent group to land on.
+
+**Why slide 04 works**: All content blocks (headline, subhead, bar charts, blockquote) live inside a single `flex:1; display:flex; flex-direction:column; justify-content:center; gap:24px` wrapper. The `justify-content:center` centers the GROUP as a single mass. Internal `gap` controls spacing between items within the group. The whitespace pools into two intentional zones — above and below the content mass — rather than being sliced into equal portions between items.
+
+**Why slides 03 and 07 fail**: The title sits outside the flex container (already breaking the group), and the remaining content uses `justify-content:space-between`. On slide 07, this leaves the tier comparison widget floating in the center of the canvas with ~200px voids above and below, completely isolated. The two body paragraphs and blockquote at the bottom are equally isolated from each other. There is no group — only evenly distributed fragments.
+
+| Pattern | Verdict | CSS |
+|---------|---------|-----|
+| `justify-content: space-between` on content items | NEVER — mechanical, AI-stamped | Replace with `justify-content: center` + `gap` |
+| `justify-content: space-evenly` on content items | AVOID — same problem, softer | Replace with `justify-content: center` + `gap` |
+| Content items as direct children of the slide root | NEVER — breaks grouping | Wrap ALL content (title included) in one flex group |
+| `justify-content: center` on a group wrapper | CORRECT | Whitespace pools at top/bottom; items stay cohesive |
+| Nested groups with their own `gap` | CORRECT | Use for sub-groupings (e.g., label + chart + caption) |
+
+**Rule**: Title and body content must be in the SAME flex group. The group centers itself within `flex:1`. Spacing between items comes from `gap` (fixed, intentional), not from `space-between` (dynamic, mechanical).
+
+```
+WRONG:
+  <h2 style="margin-bottom:12px">Title</h2>          ← outside group
+  <div style="flex:1; justify-content:space-between"> ← stretches items apart
+    <p>Block A</p>
+    <div>Block B</div>
+    <blockquote>Block C</blockquote>
+  </div>
+
+CORRECT:
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:28px">
+    <h2>Title</h2>                                    ← inside group
+    <p>Block A</p>
+    <div>Block B</div>
+    <blockquote>Block C</blockquote>
+  </div>
+```
+
+### Title Hierarchy Rule
+
+Titles at 46–52px on a 1080px canvas read as body text, not headlines. They fail the hierarchy test at every viewing distance, and they fail catastrophically when the slide is scaled to 375px mobile width (where 48px renders as ~17px effective).
+
+| Slide role | Title size | Subhead size | Body size | Caption size |
+|------------|-----------|-------------|----------|-------------|
+| **Hook / cover** | 96–140px | 44–52px | — | 28px |
+| **Data / stat** | 72–96px | 36–44px | 32–38px | 24–28px |
+| **Standard content** | 64–80px | 36–40px | 32–36px | 24–28px |
+| **Dense / multi-block** | 60–72px | 30–36px | 28–32px | 22–26px |
+
+- The title must read as a title — it should be visibly the largest element on the slide, minimum 2× the body text size
+- On a 1080px canvas, 48px is a large body paragraph, not a headline
+- Minimum title size for any content slide: **60px**
+- Preferred title size for standard content slides: **72px**
+- Titles with fewer than 20 characters should be pushed toward the upper range (80–96px)
+- Titles that span 2 lines should use `line-height: 1.1` and `letter-spacing: -1.5px` at ≥ 72px
+
+### Vertical Rhythm Rule
+
+Vertical rhythm is not equal distribution. It is intentional weight — heavy at the top, exhaling toward the bottom.
+
+**The correct model for a 1350px canvas:**
+
+```
+┌─────────────────────────┐
+│  Header bar          36px│  ← Fixed. Small. Orientation only.
+│  ─────────────────────── │
+│                          │
+│  [Content Group]         │  ← Centered in remaining space.
+│   Title (60–80px)        │    Items connected by gap (20–32px).
+│   gap: 24px              │    Sub-groups use tighter gap (12–16px).
+│   Body block A           │
+│   gap: 24px              │
+│   Body block B           │
+│   gap: 24px              │
+│   Blockquote / insight   │
+│                          │
+│  Footer               32px│  ← Fixed. Anchored to bottom via margin-top:auto.
+└─────────────────────────┘
+```
+
+- **Header and footer are fixed anchors** — they do not participate in content distribution
+- **All whitespace collects above and below the content group** — never between items
+- **Gap scale**: `gap:20px` minimum, `gap:32px` maximum between top-level content blocks; `gap:12–16px` within sub-groups (label + bar + caption is one sub-group)
+- **Dense slides** (5+ blocks): use `gap:20px` + tighter body sizes to keep the group from overflowing
+- **Sparse slides** (2–3 blocks): use `gap:32–40px` between blocks, allow the group to be genuinely spacious
+- **Never use `margin-top: auto` between content items** — that is `space-between` in disguise
+
 ### VS Enforcement
 When designing visual direction, you MUST:
 1. Generate exactly 3 alternatives with T-Scores

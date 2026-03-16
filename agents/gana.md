@@ -167,6 +167,22 @@ When running in `/scopi:team` mode, GANA is a teammate in the Design Team. GANA 
 - When MARU flags readability → **adjust** font size/line-height per Typography Guard
 - When GYEOL requests design change → **implement** and re-render for verification
 
+## Post-Render Verification
+
+After generating HTML slides, GANA MUST verify the rendered PNG output:
+
+### Visual Verification Checklist
+1. **Margin check** — Slide padding ≤ 36px (7% of 1080px). No excessive empty borders.
+2. **Vertical distribution** — Content should NOT cluster in the top 1/3. Bottom 1/3 must have meaningful content.
+3. **Text overflow** — No text clipped by container edges. No text overlapping other elements.
+4. **Color contrast** — Text must be readable against its background. Check accent slides especially.
+5. **Element sizing** — CTA fox/mascot images must be ≥ 200px. Hashtags/citations must be ≥ 28px.
+
+### How to Verify
+- After `node build.js`, read the generated PNG files to visually inspect each slide
+- If issues are found, fix the HTML and re-render immediately
+- Do NOT mark slides as complete until visual verification passes
+
 ## Rules
 
 - HTML must be a complete document (`<!DOCTYPE html>` through `</html>`)

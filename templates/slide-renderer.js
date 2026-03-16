@@ -93,6 +93,8 @@ function createRenderer(opts = {}) {
     const isAccent = mode === 'accent';
     const label = opts.label || DESIGN.brand.tag;
     const color = opts.color || null;
+    // opts.icon: custom HTML string for icon; opts.noIcon: true to hide icon entirely
+    const iconHTML = opts.noIcon ? '' : (opts.icon || compositeIcon(40));
     return `
       <div style="
         display: inline-flex; align-items: center; gap: 12px;
@@ -100,7 +102,7 @@ function createRenderer(opts = {}) {
         padding-bottom: 10px;
         margin-bottom: 20px;
       ">
-        ${compositeIcon(40)}
+        ${iconHTML}
         <span style="
           font-size: ${DESIGN.fontSize.tag}; font-weight: 700;
           letter-spacing: 2px; text-transform: uppercase;
@@ -112,7 +114,7 @@ function createRenderer(opts = {}) {
   }
 
   /** Footer — clean, larger for 2x design */
-  function footer(mode = 'warm', pageNum = 1, totalPages = 10) {
+  function footer(mode = 'warm', pageNum = 1, totalPages = 10, opts = {}) {
     const isAccent = mode === 'accent';
     const textColor = isAccent ? 'rgba(255,255,255,0.5)' : D.textTertiary;
     const dotActive = isAccent ? '#FFFFFF' : D.accent;
@@ -127,15 +129,20 @@ function createRenderer(opts = {}) {
       "></div>`;
     }).join('');
 
+    // opts.icon: custom HTML string for icon; opts.noIcon: true to hide icon
+    // opts.label: custom label text (overrides brand.author)
+    const iconHTML = opts.noIcon ? '' : (opts.icon || compositeIcon(48));
+    const labelText = opts.label || DESIGN.brand.author;
+
     return `
       <div style="
         display: flex; justify-content: space-between; align-items: center;
         margin-top: auto; padding-top: 16px;
       ">
         <div style="display: flex; align-items: center; gap: 12px;">
-          ${compositeIcon(48)}
+          ${iconHTML}
           <span style="color: ${textColor}; font-size: ${DESIGN.fontSize.small}; font-weight: 600; font-family: ${F.heading};">
-            ${DESIGN.brand.author}
+            ${labelText}
           </span>
         </div>
         <div style="display: flex; gap: 6px; align-items: center;">${dots}</div>
@@ -241,9 +248,10 @@ function createRenderer(opts = {}) {
   }
 
   /** Slide wrapper — full HTML document */
-  function slideWrapper(mode, content) {
+  function slideWrapper(mode, content, opts = {}) {
     const isAccent = mode === 'accent';
-    const bg = isAccent ? D.accentBg : D.warmBg;
+    const bg = opts.bg || (isAccent ? D.accentBg : D.warmBg);
+    const padding = opts.padding || S.padding;
 
     return `<!DOCTYPE html><html><head><meta charset="UTF-8">${fontLink}<style>${baseCSS}
       .slide-root > * { min-height: 0; }
@@ -252,7 +260,7 @@ function createRenderer(opts = {}) {
         width: ${DESIGN.width}px; height: ${DESIGN.height}px;
         background: ${bg};
         display: flex; flex-direction: column;
-        padding: ${S.padding};
+        padding: ${padding};
         position: relative;
         overflow: hidden;
       ">
@@ -345,6 +353,9 @@ function createRenderer(opts = {}) {
     const gap = opts.gap || '24px';
     const labelFontSize = parseInt(opts.labelSize || '32', 10);
     const labelLH = labelFontSize >= 36 ? '1.4' : '1.5';
+    // opts.noBorder: true to remove border; opts.noBg: true to remove background
+    const showBorder = !opts.noBorder;
+    const showBg = !opts.noBg;
 
     return `
       <div style="display: flex; gap: ${gap}; flex-wrap: wrap; ${opts.style || ''}">
@@ -353,10 +364,10 @@ function createRenderer(opts = {}) {
             flex: 1;
             min-width: 0;
             text-align: center;
-            padding: ${opts.padding || '36px 24px'};
-            background: ${s.bgColor || D.accentSoft};
-            border: 1.5px solid ${s.borderColor || D.accentBorder};
-            border-radius: ${opts.radius || '20px'};
+            padding: ${opts.padding || '24px 16px'};
+            ${showBg ? `background: ${s.bgColor || D.accentSoft};` : ''}
+            ${showBorder ? `border: 1px solid ${s.borderColor || D.accentBorder};` : ''}
+            border-radius: ${opts.radius || '12px'};
           ">
             <div style="
               font-size: ${opts.valueSize || '80px'};

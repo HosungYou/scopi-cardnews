@@ -69,8 +69,8 @@ const DEFAULTS = {
   },
 
   spacing: {
-    padding: '52px',
-    paddingLarge: '60px',
+    padding: '40px',
+    paddingLarge: '52px',
     gap: '20px',
     gapLarge: '28px',
     borderRadius: '20px',
@@ -123,8 +123,14 @@ function createDesignSystem(opts = {}) {
       ...(inlineTheme.fonts || {}),
     },
 
-    fontSize: { ...DEFAULTS.fontSize },
-    spacing: { ...DEFAULTS.spacing },
+    fontSize: {
+      ...DEFAULTS.fontSize,
+      ...(inlineTheme.fontSize || {}),
+    },
+    spacing: {
+      ...DEFAULTS.spacing,
+      ...(inlineTheme.spacing || {}),
+    },
 
     brand: {
       ...DEFAULTS.brand,
