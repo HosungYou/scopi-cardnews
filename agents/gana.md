@@ -183,38 +183,40 @@ After generating HTML slides, GANA MUST verify the rendered PNG output:
 - If issues are found, fix the HTML and re-render immediately
 - Do NOT mark slides as complete until visual verification passes
 
-## Caption File Generation
+## Posting Package Generation
 
-After build is verified, GANA MUST generate a `caption.txt` file in the episode directory with the following structure:
+After build is verified, GANA MUST generate a `caption.txt` posting package with 6 sections:
 
 ```
 ═══════════════════════════════════════════════
-  EP## — Instagram Caption
-  {시리즈명} EP.##
-  {에피소드 제목}
+  EP## — 포스팅 패키지
 ═══════════════════════════════════════════════
 
-[CAPTION — 아래 전체를 캡션 입력란에 붙여넣기]
+━━━ 1. INSTAGRAM 캡션 ━━━
+{캡션 본문 + APA 인용 + 태그}
 
-{캡션 본문}
+━━━ 2. THREADS 글 1/2 (소개/훅) ━━━
+{텍스트만 — 훅 + "↓"}
 
-[SETTINGS]
+━━━ 3. THREADS 글 2/2 (본문 + 카드뉴스) ━━━
+📎 이미지: slide-01~##.png 전체 첨부
+{텍스트 — 핵심 데이터 + APA 인용 + DOI 링크}
 
-비율: 4:5 (Original)
-필터: 없음
-Threads 공유: ON
+━━━ 4. @개인계정 스토리 ━━━
+{스토리 3장 스크립트}
 
-[POSTING CHECKLIST]
+━━━ 5. INSTAGRAM 설정 ━━━
+비율: 4:5 / 필터: 없음 / Threads 자동 공유: OFF
 
-□ 슬라이드 순서 확인
-□ 캡션 붙여넣기
-□ Threads 공유 확인
-□ Share
-□ Threads에 첫 댓글로 DOI 링크
-□ 스토리 공유 (링크 스티커)
-□ plan.md에 포스팅일 기록
+━━━ 6. POSTING CHECKLIST ━━━
+□ Instagram → Threads → 스토리 순서
 ═══════════════════════════════════════════════
 ```
+
+### Dual Platform Rules
+- Instagram ↔ Threads **자동 연동 OFF** (캐러셀이 깨짐)
+- Threads 글 2/2에 **카드뉴스 이미지 전체 첨부** + DOI 링크 (클릭 가능)
+- Threads가 발견 채널 (관심사 피드), Instagram이 체류 채널 (저장/공유)
 
 ### Caption Writing Rules
 - 첫 문장 = 훅 (피드에서 보이는 유일한 줄)
