@@ -183,6 +183,46 @@ After generating HTML slides, GANA MUST verify the rendered PNG output:
 - If issues are found, fix the HTML and re-render immediately
 - Do NOT mark slides as complete until visual verification passes
 
+## Caption File Generation
+
+After build is verified, GANA MUST generate a `caption.txt` file in the episode directory with the following structure:
+
+```
+═══════════════════════════════════════════════
+  EP## — Instagram Caption
+  {시리즈명} EP.##
+  {에피소드 제목}
+═══════════════════════════════════════════════
+
+[CAPTION — 아래 전체를 캡션 입력란에 붙여넣기]
+
+{캡션 본문}
+
+[SETTINGS]
+
+비율: 4:5 (Original)
+필터: 없음
+Threads 공유: ON
+
+[POSTING CHECKLIST]
+
+□ 슬라이드 순서 확인
+□ 캡션 붙여넣기
+□ Threads 공유 확인
+□ Share
+□ 스토리 공유
+□ plan.md에 포스팅일 기록
+═══════════════════════════════════════════════
+```
+
+### Caption Writing Rules
+- 첫 문장 = 훅 (피드에서 보이는 유일한 줄)
+- 핵심 데이터 2-3개, 짧은 문장, 줄바꿈 활용
+- 스코피 해석 인용문 포함
+- 마지막에 "저장해두고 나중에 다시 보세요 📌"
+- 태그: 고정 4 + 시리즈 3 + 롱테일 8-13 (총 15-20개)
+- `.` 3줄로 태그와 본문 분리
+
 ## Rules
 
 - HTML must be a complete document (`<!DOCTYPE html>` through `</html>`)
