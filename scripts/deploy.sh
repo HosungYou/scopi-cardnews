@@ -132,16 +132,19 @@ node -e "
 const fs = require('fs');
 const p = '$INSTALLED_JSON';
 const data = JSON.parse(fs.readFileSync(p, 'utf-8'));
-const key = Object.keys(data).find(k => k.includes('$PLUGIN_NAME'));
+const plugins = data.plugins || data;
+const key = Object.keys(plugins).find(k => k.includes('$PLUGIN_NAME'));
 if (key) {
-  data[key].installPath = '$CACHE_BASE/$NEW_VERSION';
-  data[key].version = '$NEW_VERSION';
-  data[key].gitCommitSha = '$NEW_SHA';
-  data[key].installedAt = new Date().toISOString();
-  fs.writeFileSync(p, JSON.stringify(data, null, 2) + '\n');
-  console.log('  ✓ Registry updated: ' + key);
+  const entry = Array.isArray(plugins[key]) ? plugins[key][0] : plugins[key];
+  entry.installPath = '$CACHE_BASE/$NEW_VERSION';
+  entry.version = '$NEW_VERSION';
+  entry.gitCommitSha = '$NEW_SHA';
+  entry.lastUpdated = new Date().toISOString();
+  fs.writeFileSync(p, JSON.stringify(data, null, 4) + '\n');
+  console.log('  ✓ Registry updated: ' + key + ' → v$NEW_VERSION');
 } else {
   console.log('  ⚠️  Plugin key not found in registry. Manual reinstall needed.');
+  console.log('  Available keys:', Object.keys(plugins).join(', '));
 }
 "
 
