@@ -21,7 +21,7 @@
 
 ![Scopi Agent Teams Pipeline](scopi-demo.gif)
 
-*SCOPI logo → pre-flight confirmation → NARA VS story arcs → Design Team debate → GANA output*
+*Not one LLM running in isolation. 7 expert agents with distinct roles — they debate each other, enforce VS anti-mode-collapse, and produce output that doesn't look AI-generated.*
 
 ---
 
