@@ -1,0 +1,30 @@
+{
+  "name": "Charcoal Warm",
+  "description": "늦은 밤 연구실 — 차콜과 앰버가 만드는 따뜻한 어둠",
+  "colors": {
+    "warmBg": "#F2F0ED",
+    "accent": "#C17A3A",
+    "accentBg": "#2C2520",
+    "accentText": "#F5F0EB",
+    "accentTextSoft": "#D4C4B0",
+    "textPrimary": "#1C1A17",
+    "textSecondary": "#4D4840",
+    "textTertiary": "#8E877D",
+    "cardBg": "#FAF8F5",
+    "accentSoft": "rgba(193,122,58,0.08)",
+    "accentMedium": "rgba(193,122,58,0.14)",
+    "accentBorder": "rgba(193,122,58,0.20)",
+    "termBg": "#1A1714",
+    "termHeader": "#242019",
+    "termPrompt": "#D4945A",
+    "termText": "#EDE8E0",
+    "termGreen": "#7BAF6A",
+    "termYellow": "#D4A84B",
+    "termComment": "#6E6358"
+  },
+  "fonts": {
+    "heading": "'DM Serif Display', 'Noto Serif KR', Georgia, serif",
+    "body": "'Source Serif 4', 'Noto Serif KR', Georgia, serif",
+    "code": "'Fira Code', 'SF Mono', monospace"
+  }
+}

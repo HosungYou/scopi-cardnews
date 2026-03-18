@@ -2,6 +2,20 @@
 
 All notable changes to Scopi Card News will be documented in this file.
 
+## [2.5.0] — 2026-03-18
+
+### Added
+- **Theme preset system** — 6 preset themes in `themes/` directory: deep-navy, plum-academic, slate-teal, charcoal-warm, forest-ink, ochre-and-ink. Specify `theme.preset` in `scopi.config.json` to load.
+- **Cover background image** — `slideWrapper()` now supports `backgroundImage` (base64/URL), `overlay` (dark-gradient, bright-blur, none), and `overlayOpacity` options for cover slides.
+- **Content alignment option** — `slideWrapper()` accepts `contentAlign` parameter for explicit layout control.
+- **Unsplash integration module** — `templates/unsplash.js` for cover image sourcing.
+
+### Changed
+- **Default padding**: 40px → 36px (≤7% of 1080px canvas, per anti-AI margin rule).
+- **Design system merge order**: DEFAULTS ← preset theme ← inline overrides. Theme presets are loaded from `themes/{name}.json`.
+- **GANA agent**: Centering wrapper pattern made mandatory. Paper title rule added (cover must show paper title, CTA must show full APA 7th). Anti-AI border-radius guidance (data: 0-2px, cards: 6-8px, pills: 20-32px, comparisons: border lines only).
+- **GYEOL agent**: Anti-AI borderRadius rule refined with specific ranges per element type. Centering wrapper noted as mandatory (footer margin-top:auto overrides slideWrapper justify-content). Paper title rule added.
+
 ## [2.3.0] — 2026-03-14
 
 ### Added

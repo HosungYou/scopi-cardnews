@@ -247,24 +247,68 @@ function createRenderer(opts = {}) {
     `;
   }
 
-  /** Slide wrapper — full HTML document */
+  /** Slide wrapper — full HTML document
+   *  opts.backgroundImage — base64 data URI or file path
+   *  opts.overlay — 'dark-gradient' | 'bright-blur' | 'none' (default: 'dark-gradient')
+   *  opts.overlayOpacity — 0-1 (default: 0.55)
+   *  opts.contentAlign — 'center' (default) | 'space-between'
+   */
   function slideWrapper(mode, content, opts = {}) {
     const isAccent = mode === 'accent';
     const bg = opts.bg || (isAccent ? D.accentBg : D.warmBg);
     const padding = opts.padding || S.padding;
+    const contentAlign = opts.contentAlign || 'center';
+    const justifyContent = contentAlign === 'space-between' ? 'space-between' : 'center';
+
+    // Background image layers
+    let bgImageCSS = '';
+    let overlayHTML = '';
+    if (opts.backgroundImage) {
+      const imgSrc = opts.backgroundImage;
+      bgImageCSS = `background-image: url('${imgSrc}'); background-size: cover; background-position: center;`;
+
+      const overlayType = opts.overlay || 'dark-gradient';
+      const overlayOpacity = opts.overlayOpacity != null ? opts.overlayOpacity : 0.55;
+
+      if (overlayType === 'dark-gradient') {
+        const opTop = overlayOpacity;
+        const opBottom = Math.min(overlayOpacity * 1.3, 1);
+        overlayHTML = `<div style="
+          position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+          background: linear-gradient(to bottom, rgba(0,0,0,${opTop}), rgba(0,0,0,${opBottom}));
+          z-index: 1;
+        "></div>`;
+      } else if (overlayType === 'bright-blur') {
+        overlayHTML = `<div style="
+          position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+          backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+          background: rgba(255,255,255,0.7);
+          z-index: 1;
+        "></div>`;
+      }
+      // overlayType === 'none' → no overlay
+    }
 
     return `<!DOCTYPE html><html><head><meta charset="UTF-8">${fontLink}<style>${baseCSS}
       .slide-root > * { min-height: 0; }
     </style></head><body>
       <div class="slide-root" style="
         width: ${DESIGN.width}px; height: ${DESIGN.height}px;
-        background: ${bg};
+        background: ${bg}; ${bgImageCSS}
         display: flex; flex-direction: column;
         padding: ${padding};
         position: relative;
         overflow: hidden;
       ">
-        ${content}
+        ${overlayHTML}
+        <div style="
+          position: relative; z-index: 2;
+          display: flex; flex-direction: column;
+          justify-content: ${justifyContent}; gap: 24px;
+          flex: 1; min-height: 0;
+        ">
+          ${content}
+        </div>
       </div>
     </body></html>`;
   }

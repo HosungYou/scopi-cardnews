@@ -1,0 +1,30 @@
+{
+  "name": "Forest Ink",
+  "description": "숲속 서재 — 깊은 그린과 크래프트지가 만드는 자연 속 연구",
+  "colors": {
+    "warmBg": "#F0EDE6",
+    "accent": "#2D5F3F",
+    "accentBg": "#1A3828",
+    "accentText": "#F0F5EE",
+    "accentTextSoft": "#B5CCBA",
+    "textPrimary": "#1A1D18",
+    "textSecondary": "#3D4A3D",
+    "textTertiary": "#7A8A78",
+    "cardBg": "#FAFAF5",
+    "accentSoft": "rgba(45,95,63,0.08)",
+    "accentMedium": "rgba(45,95,63,0.14)",
+    "accentBorder": "rgba(45,95,63,0.20)",
+    "termBg": "#0F1710",
+    "termHeader": "#1A221A",
+    "termPrompt": "#5BAF6A",
+    "termText": "#E0EDE0",
+    "termGreen": "#3FB950",
+    "termYellow": "#D4A84B",
+    "termComment": "#5D6E5D"
+  },
+  "fonts": {
+    "heading": "'Merriweather', 'Noto Serif KR', Georgia, serif",
+    "body": "'Noto Sans KR', 'Inter', -apple-system, sans-serif",
+    "code": "'Fira Code', 'SF Mono', monospace"
+  }
+}

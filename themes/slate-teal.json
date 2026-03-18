@@ -1,0 +1,30 @@
+{
+  "name": "Slate & Teal",
+  "description": "실험실 노트 — 슬레이트 그레이와 틸이 만드는 차분한 실험 공간",
+  "colors": {
+    "warmBg": "#EEF2F0",
+    "accent": "#2A7B6F",
+    "accentBg": "#1A4D45",
+    "accentText": "#F0F8F5",
+    "accentTextSoft": "#B5D5CC",
+    "textPrimary": "#1A1F1D",
+    "textSecondary": "#3D4A45",
+    "textTertiary": "#7A8A83",
+    "cardBg": "#F8FBFA",
+    "accentSoft": "rgba(42,123,111,0.08)",
+    "accentMedium": "rgba(42,123,111,0.14)",
+    "accentBorder": "rgba(42,123,111,0.20)",
+    "termBg": "#0F1714",
+    "termHeader": "#1A221F",
+    "termPrompt": "#5BC4B0",
+    "termText": "#E0EDE8",
+    "termGreen": "#3FB950",
+    "termYellow": "#D4A84B",
+    "termComment": "#5D6E66"
+  },
+  "fonts": {
+    "heading": "'DM Sans', 'Noto Sans KR', -apple-system, sans-serif",
+    "body": "'Source Serif 4', 'Noto Serif KR', Georgia, serif",
+    "code": "'Fira Code', 'SF Mono', monospace"
+  }
+}

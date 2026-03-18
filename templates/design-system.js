@@ -69,7 +69,7 @@ const DEFAULTS = {
   },
 
   spacing: {
-    padding: '40px',
+    padding: '36px',
     paddingLarge: '52px',
     gap: '20px',
     gapLarge: '28px',
@@ -106,7 +106,24 @@ function loadConfig(cwd) {
  */
 function createDesignSystem(opts = {}) {
   const cwd = opts.cwd || process.cwd();
+  const pluginRoot = opts.pluginRoot || path.join(__dirname, '..');
   const config = loadConfig(cwd);
+
+  // Load theme preset if specified, then merge: DEFAULTS ← preset ← inline overrides
+  let presetTheme = {};
+  if (config.theme && config.theme.preset) {
+    const presetPath = path.join(pluginRoot, 'themes', config.theme.preset + '.json');
+    try {
+      if (fs.existsSync(presetPath)) {
+        presetTheme = JSON.parse(fs.readFileSync(presetPath, 'utf-8'));
+      } else {
+        console.warn(`[design-system] Theme preset "${config.theme.preset}" not found at ${presetPath}`);
+      }
+    } catch (e) {
+      console.warn(`[design-system] Failed to load theme preset "${config.theme.preset}":`, e.message);
+    }
+  }
+
   const inlineTheme = config.theme || {};
 
   const DESIGN = {
@@ -115,20 +132,24 @@ function createDesignSystem(opts = {}) {
 
     colors: {
       ...DEFAULTS.colors,
+      ...(presetTheme.colors || {}),
       ...(inlineTheme.colors || {}),
     },
 
     fonts: {
       ...DEFAULTS.fonts,
+      ...(presetTheme.fonts || {}),
       ...(inlineTheme.fonts || {}),
     },
 
     fontSize: {
       ...DEFAULTS.fontSize,
+      ...(presetTheme.fontSize || {}),
       ...(inlineTheme.fontSize || {}),
     },
     spacing: {
       ...DEFAULTS.spacing,
+      ...(presetTheme.spacing || {}),
       ...(inlineTheme.spacing || {}),
     },
 

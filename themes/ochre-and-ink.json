@@ -1,0 +1,30 @@
+{
+  "name": "Ochre & Ink",
+  "description": "학술적 열기 — 번트 시에나 악센트와 에스프레소 터미널이 만드는 따뜻한 연구자의 책상",
+  "colors": {
+    "warmBg": "#F5EFE0",
+    "accent": "#B85C38",
+    "accentBg": "#8F3D22",
+    "accentText": "#FDF6EE",
+    "accentTextSoft": "#EDD9C5",
+    "textPrimary": "#1C1510",
+    "textSecondary": "#4D3F35",
+    "textTertiary": "#9C8878",
+    "cardBg": "#FBF8F1",
+    "accentSoft": "rgba(184,92,56,0.08)",
+    "accentMedium": "rgba(184,92,56,0.14)",
+    "accentBorder": "rgba(184,92,56,0.24)",
+    "termBg": "#1E1510",
+    "termHeader": "#2A1E17",
+    "termPrompt": "#D4845A",
+    "termText": "#F0E8DF",
+    "termGreen": "#7BAF6A",
+    "termYellow": "#D4A84B",
+    "termComment": "#7A6355"
+  },
+  "fonts": {
+    "heading": "'DM Serif Display', 'Noto Serif KR', Georgia, serif",
+    "body": "'Source Serif 4', 'Noto Serif KR', Georgia, serif",
+    "code": "'Fira Code', 'SF Mono', 'Menlo', monospace"
+  }
+}

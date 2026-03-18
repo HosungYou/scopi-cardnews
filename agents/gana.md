@@ -102,6 +102,63 @@ const imgTag = `<img src="data:image/png;base64,${base64}" style="width:100%;bor
 - **Design tokens** — Always reference `DESIGN.colors`, `DESIGN.fonts`, `DESIGN.fontSize` — never hardcode values
 - **Full-bleed** — Every slide fills `width x height` completely
 
+## Content Layout Rules
+
+### Vertical Centering (Required Pattern)
+- The slideWrapper's `justify-content: center` is overridden by footer's `margin-top: auto`
+- Therefore, ALL slides MUST use an explicit centering wrapper between seriesTag and footer:
+
+```javascript
+const slide = slideWrapper('warm', `
+  ${seriesTag('warm', { label: '...', noIcon: true })}
+
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:24px;">
+    <!-- ALL main content goes HERE -->
+    <div>Title</div>
+    <div>Body</div>
+    <div>Chart</div>
+  </div>
+
+  ${footer('warm', N, 8, { noIcon: true, label: 'Scopi Lab' })}
+`);
+```
+
+- This pattern centers the content GROUP as a cohesive mass
+- The centering wrapper takes flex:1 (all remaining space after seriesTag and footer)
+- Content inside is centered with justify-content:center
+- NEVER place content directly between seriesTag and footer without this wrapper
+
+### Whitespace Management
+- Maximum padding: 36px (config value, do not exceed)
+- If a slide looks empty, ADD MORE EXPLANATORY CONTENT — don't just adjust spacing
+- Each slide should have enough text to fill at least 60% of the vertical space
+- Empty space should be INTENTIONAL (breathing room between groups), not accidental (missing content)
+- Data cards: use border-radius 0px (sharp) or 2px, NOT 10px+ (anti-AI rule)
+- Comparison blocks: use border-top/bottom lines, NOT rounded background containers
+
+### Cover Slide Background Image
+- Cover slides (S01) SHOULD use a background image when available
+- Use `slideWrapper()` with `opts.backgroundImage` parameter
+- Overlay styles: 'dark-gradient' (white text) or 'bright-blur' (dark text)
+- Alternate overlay styles across episodes for visual variety
+- Attribution: Include "Photo: Author / Unsplash" in footer or small text
+
+### Paper Title Rule (필수)
+- 커버 슬라이드(S01): 논문 제목을 이탤릭 또는 인용구로 반드시 표시
+- 마지막 슬라이드(CTA): 완전한 서지 정보 — 저자 전원, 논문 제목, 저널, 권호, DOI
+- 중간 슬라이드: "Kobak et al. (2025)" 약칭 사용 가능
+- 저자+저널명만 표시하면 안 됨 — 독자가 어떤 논문인지 즉시 파악할 수 없음
+
+## Theme Rotation
+- Each episode MUST use a different theme preset than the previous episode
+- Check the previous episode's `scopi.config.json` to see which theme was used
+- Available presets: ochre-and-ink, celadon-grove, deep-navy, plum-academic, slate-teal, charcoal-warm, forest-ink
+- Choose a theme that matches the episode's subject matter:
+  - Data/statistics heavy → deep-navy, slate-teal
+  - Ethics/philosophy → plum-academic, forest-ink
+  - Technology/tools → deep-navy, charcoal-warm
+  - Education/policy → celadon-grove, ochre-and-ink
+
 ## VS Methodology
 
 When building key slides (hook, CTA), generate 3 structural variations:

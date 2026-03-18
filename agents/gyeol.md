@@ -130,7 +130,7 @@ GYEOL MUST audit every slide deck against these "AI-generated look" patterns and
 | Pattern | Why it looks AI | Fix |
 |---------|----------------|-----|
 | rgba() transparency on every background | Washed-out, no commitment | Use solid colors; reserve rgba for max 2 elements per deck |
-| Uniform borderRadius (e.g., 20px everywhere) | Cookie-cutter, no intentionality | Vary: 0px (sharp data), 8px (cards), 32px (pills), one-side radius |
+| Uniform borderRadius (e.g., 10-20px on data cards) | Cookie-cutter, AI-generated feel | Data containers: 0-2px (sharp). Info cards: 6-8px. Tag pills: 20-32px. Comparison blocks: NO rounded bg — use border lines instead |
 | letter-spacing: 2px on all text | Fake "premium" feel | Headings only 0.5-1px; body text 0; never exceed 1.5px |
 | Equal padding on all slides (e.g., 52px) | Mechanical uniformity | Asymmetric: vary by slide role (hook=generous, data=tight) |
 | Emoji icons as visual design | Looks like a Notion page | Use typography, geometric shapes, or SVG only. Emoji allowed in content text only |
@@ -188,6 +188,8 @@ CORRECT:
   </div>
 ```
 
+**Centering wrapper is MANDATORY**: Because `footer()` uses `margin-top: auto`, the slideWrapper's `justify-content: center` is always overridden. Every slide MUST wrap its main content in `<div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:24px;">`. Without this wrapper, content will cluster at the top of the slide.
+
 ### Title Hierarchy Rule
 
 Titles at 46–52px on a 1080px canvas read as body text, not headlines. They fail the hierarchy test at every viewing distance, and they fail catastrophically when the slide is scaled to 375px mobile width (where 48px renders as ~17px effective).
@@ -236,6 +238,25 @@ Vertical rhythm is not equal distribution. It is intentional weight — heavy at
 - **Dense slides** (5+ blocks): use `gap:20px` + tighter body sizes to keep the group from overflowing
 - **Sparse slides** (2–3 blocks): use `gap:32–40px` between blocks, allow the group to be genuinely spacious
 - **Never use `margin-top: auto` between content items** — that is `space-between` in disguise
+
+### Content Density Rules
+- Every slide must fill at least 60% of vertical space with meaningful content
+- If a slide has large empty areas, recommend adding:
+  - Contextual explanation text (28-32px body)
+  - Source attribution or methodology note
+  - Supplementary data point
+- "의도적 여백"은 그룹 사이 24-32px gap으로 충분. 100px+ 빈 공간은 콘텐츠 부족 신호.
+
+### Paper Title Rule (필수)
+카드뉴스 레이아웃에서 논문 인용 시:
+- 커버(S01): 논문 제목을 이탤릭체로 표시 — 제목 없이 저자+저널만 표시하면 안 됨
+- CTA(마지막): 완전한 APA 7th 서지 정보 (저자 전원, 논문 제목, 저널, 권호, DOI)
+- 중간 슬라이드: "Kobak et al. (2025)" 약칭 사용 가능
+
+### Theme Recommendation
+- At design phase, recommend a theme preset that matches the episode mood
+- Previous episode theme MUST NOT be reused consecutively
+- Present theme choice as part of VS visual directions (e.g., "Direction A uses Deep Navy for data journalism feel")
 
 ### VS Enforcement
 When designing visual direction, you MUST:

@@ -1,0 +1,30 @@
+{
+  "name": "Deep Navy",
+  "description": "데이터 저널리즘 — 깊은 네이비와 슬레이트 블루가 만드는 연구실의 밤",
+  "colors": {
+    "warmBg": "#F0F2F5",
+    "accent": "#1B4965",
+    "accentBg": "#0D2137",
+    "accentText": "#F0F4F8",
+    "accentTextSoft": "#B8C9D9",
+    "textPrimary": "#1A1D23",
+    "textSecondary": "#3D4451",
+    "textTertiary": "#7A8394",
+    "cardBg": "#FFFFFF",
+    "accentSoft": "rgba(27,73,101,0.08)",
+    "accentMedium": "rgba(27,73,101,0.14)",
+    "accentBorder": "rgba(27,73,101,0.20)",
+    "termBg": "#0D1117",
+    "termHeader": "#161B22",
+    "termPrompt": "#58A6FF",
+    "termText": "#E6EDF3",
+    "termGreen": "#3FB950",
+    "termYellow": "#D29922",
+    "termComment": "#6E7681"
+  },
+  "fonts": {
+    "heading": "'Inter', 'Noto Sans KR', -apple-system, sans-serif",
+    "body": "'Noto Sans KR', 'Inter', -apple-system, sans-serif",
+    "code": "'JetBrains Mono', 'Fira Code', monospace"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "Plum Academic",
+  "description": "학술적 깊이 — 자주색과 크림이 만드는 고전적 연구 공간",
+  "colors": {
+    "warmBg": "#F5F0F0",
+    "accent": "#6B3A5D",
+    "accentBg": "#3D1F35",
+    "accentText": "#F8F2F6",
+    "accentTextSoft": "#D4B8CA",
+    "textPrimary": "#1C1519",
+    "textSecondary": "#4A3D45",
+    "textTertiary": "#8E7D86",
+    "cardBg": "#FFFBFD",
+    "accentSoft": "rgba(107,58,93,0.08)",
+    "accentMedium": "rgba(107,58,93,0.14)",
+    "accentBorder": "rgba(107,58,93,0.20)",
+    "termBg": "#1A1018",
+    "termHeader": "#241A22",
+    "termPrompt": "#C084A8",
+    "termText": "#EDE6EB",
+    "termGreen": "#7BAF6A",
+    "termYellow": "#D4A84B",
+    "termComment": "#6E5D68"
+  },
+  "fonts": {
+    "heading": "'Playfair Display', 'Noto Serif KR', Georgia, serif",
+    "body": "'Lora', 'Noto Serif KR', Georgia, serif",
+    "code": "'Fira Code', 'SF Mono', monospace"
+  }
+}
