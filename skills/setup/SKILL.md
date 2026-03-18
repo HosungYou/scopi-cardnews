@@ -13,16 +13,15 @@ You are running the Scopi Card News setup. This is NOT a simple form — it's an
 Display this banner:
 
 ```
-  ╔══════════════════════════════════════════════╗
-  ║                                              ║
-  ║        S C O P I   C A R D N E W S           ║
-  ║        ────────────────────────────           ║
-  ║        Navigate your story.                  ║
-  ║                                              ║
-  ║        v2.3 · 7 Expert Agents                ║
-  ║        VS Design + Agent Teams               ║
-  ║                                              ║
-  ╚══════════════════════════════════════════════╝
+ ____   ____  ___  ____  ___
+/ ___| / ___|/ _ \|  _ \|_ _|
+\___ \| |   | | | | |_) || |
+ ___) | |___| |_| |  __/ | |
+|____/ \____|\___/|_|   |___|
+  Card News · Agent Teams · VS Methodology
+
+  v2.5 · 7 Expert Agents · VS Anti-Mode-Collapse
+  github.com/HosungYou/scopi-cardnews
 ```
 
 Use AskUserQuestion:

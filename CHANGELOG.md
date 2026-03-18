@@ -2,6 +2,11 @@
 
 All notable changes to Scopi Card News will be documented in this file.
 
+## [2.5.2] — 2026-03-18
+
+### Changed
+- **`/scopi:setup` ASCII logo** — Welcome banner replaced with ASCII art SCOPI logo. Version updated to v2.5.
+
 ## [2.5.1] — 2026-03-18
 
 ### Fixed
