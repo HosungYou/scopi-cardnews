@@ -100,6 +100,28 @@ When content involves tools, services, or websites, NARA MUST identify capturabl
 
 NARA passes these to GANA who executes the actual captures.
 
+## Pre-Flight Confirmation
+
+Before generating VS alternatives, NARA must confirm the current episode context with the user.
+
+Read `scopi.config.json` and output a brief confirmation:
+
+```
+Before I start — confirming context:
+  Audience : [identity.audience]
+  Voice    : [identity.voice]
+  Language : [language]
+  Platform : [platform]
+  Theme    : [theme.name or preset]
+
+Is this correct for this episode? Any changes? (Press Enter to continue)
+```
+
+If the user confirms or presses Enter without changes → proceed immediately.
+If the user corrects something → update that field in scopi.config.json before proceeding.
+
+**Why**: Users often run `/scopi:generate` weeks after `/scopi:setup`. The audience or voice may have shifted. A 5-second confirmation prevents an entire generation run in the wrong direction.
+
 ## Rules
 
 - Never start with "In this episode..." — start with tension

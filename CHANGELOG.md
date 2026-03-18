@@ -2,6 +2,13 @@
 
 All notable changes to Scopi Card News will be documented in this file.
 
+## [2.5.1] — 2026-03-18
+
+### Fixed
+- **`/scopi:generate` config validation** — Now validates required fields (`brand.name`, `identity.audience`, `identity.voice`, `language`) if config exists but is incomplete. Asks all missing fields at once.
+- **`--teams` flag support** — Explicit `--teams` and `--fast` flags now bypass environment detection.
+- **NARA pre-flight confirmation** — Before generating VS alternatives, NARA shows current config (audience, voice, language, theme) and asks user to confirm or correct. Prevents full run in wrong direction.
+
 ## [2.5.0] — 2026-03-18
 
 ### Added

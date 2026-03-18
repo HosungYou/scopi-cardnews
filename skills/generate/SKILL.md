@@ -12,38 +12,60 @@ You are running the Scopi full generation pipeline. This orchestrates expert age
 
 ## Prerequisites
 
-Check for `scopi.config.json` in the current working directory. If it doesn't exist, tell the user to run `/scopi:setup` first.
+### Step 1: Config check
 
-Read `scopi.config.json` to load:
-- `brand` — brand name, handle, author, tagline
-- `identity` — contentType, audience, audiencePainPoints, voice, visualStyle, priority, captureTargets
-- `theme` — inline theme object (name, colors, fonts)
-- `dimensions` — width, height
-- `language` — ko or en
-- `pipeline` — retina, format, capture, teamMode, teamDebate settings
+Check for `scopi.config.json` in the current working directory.
+- **Missing**: tell the user to run `/scopi:setup` first. Stop.
+- **Exists**: read and validate required fields below.
+
+### Step 2: Config validation
+
+Read and validate `scopi.config.json`. For each missing or empty required field, collect it now:
+
+| Field | Required | If missing → ask |
+|-------|----------|-----------------|
+| `brand.name` | Yes | "What's your brand name?" |
+| `identity.audience` | Yes | "Who is your target audience?" |
+| `identity.voice` | Yes | "What tone? (e.g. professional-warm, academic-direct)" |
+| `language` | Yes | "Language? (ko / en)" |
+| `theme` | No | Use defaults silently |
+| `pipeline.teamMode` | No | Detected from flags/env |
+
+If 2+ fields are missing, ask all at once in a single message — do NOT ask one-by-one.
+
+### Step 3: `--teams` flag handling
+
+Parse the command arguments:
+- `--teams` or `-t` → force Agent Teams mode regardless of env var
+- `--fast` or `-f` → force Subagent mode (skip Teams even if available)
+- No flag → auto-detect (see Mode Detection below)
+
+Example: `/scopi:generate "AI in publishing" --teams`
 
 ## Mode Detection (Auto-Routing)
 
-Before starting the pipeline, determine which mode to use:
-
 ```
-Step 1: Is CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 set?
-  ├── NO → Subagent Mode (sequential pipeline)
-  └── YES → Step 2
+Step 1: Was --teams flag passed?
+  ├── YES → Teams Mode (skip env var check)
+  └── NO → Step 2
 
-Step 2: Does the content benefit from agent debate?
-  ├── Academic/research content (identity.contentType = "academic") → Teams Mode
-  ├── User explicitly requests "team" or "debate" → Teams Mode
+Step 2: Is CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 set?
+  ├── NO → Subagent Mode (sequential pipeline)
+  └── YES → Step 3
+
+Step 3: Does the content benefit from agent debate?
+  ├── Academic/research (identity.contentType = "academic") → Teams Mode
+  ├── User says "team", "debate", "협업" → Teams Mode
   ├── Topic involves ethical complexity → Teams Mode
   └── Simple/promotional content → Subagent Mode (faster, cheaper)
 
-Step 3: Announce the mode
-  "🔄 Agent Teams 감지됨 — 에이전트 협업 모드로 진행합니다."
+Step 4: Announce the mode
+  "🔄 Agent Teams mode — 5 agents will debate in parallel."
   or
-  "▶️ 순차 파이프라인으로 진행합니다."
+  "▶ Sequential pipeline — faster single-agent mode."
 ```
 
-The user can override: "팀 모드로 해줘" → force Teams, "빠르게 해줘" → force Subagent.
+The user can override at any time: "use teams" / "팀 모드로" → force Teams, "fast" / "빠르게" → force Subagent.
 
 ## Input
 

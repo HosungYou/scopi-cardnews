@@ -11,7 +11,7 @@
 > Turn any paper, topic, or idea into scroll-stopping social card news —
 > without the generic AI aesthetic.
 
-[![version](https://img.shields.io/badge/version-2.5.0-1B4965?style=flat-square)](https://github.com/HosungYou/scopi-cardnews/releases)
+[![version](https://img.shields.io/badge/version-2.5.1-1B4965?style=flat-square)](https://github.com/HosungYou/scopi-cardnews/releases)
 [![license](https://img.shields.io/badge/license-MIT-3FB950?style=flat-square)](LICENSE)
 [![platform](https://img.shields.io/badge/Claude_Code-plugin-D29922?style=flat-square)](https://claude.ai/code)
 
@@ -21,7 +21,7 @@
 
 ![Scopi Agent Teams Pipeline](scopi-demo.gif)
 
-*7 agents debate in real-time. VS methodology forces creative alternatives. One command.*
+*SCOPI logo → pre-flight confirmation → NARA VS story arcs → Design Team debate → GANA output*
 
 ---
 
@@ -151,10 +151,10 @@ A 10-step brand identity interview captures your voice, audience, visual style, 
 ### Generate
 
 ```
-/scopi:generate
+/scopi:generate "your topic" --teams
 ```
 
-Auto-selects sequential (subagent) or collaborative (Agent Teams) mode based on environment and content complexity.
+`--teams` forces Agent Teams mode (parallel debate). Without the flag, auto-selects based on environment and content type.
 
 ---
 
