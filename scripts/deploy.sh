@@ -8,7 +8,7 @@
 set -e
 
 BUMP_TYPE="${1:-patch}"
-SOURCE_DIR="/Volumes/External SSD/Projects/scopi-cardnews"
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PLUGIN_NAME="scopi-cardnews"
 CACHE_BASE="$HOME/.claude/plugins/cache/$PLUGIN_NAME/$PLUGIN_NAME"
 MARKETPLACE_DIR="$HOME/.claude/plugins/marketplaces/$PLUGIN_NAME"

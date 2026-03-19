@@ -1,6 +1,6 @@
 {
   "name": "scopi-cardnews",
-  "version": "2.3.0",
+  "version": "2.5.2",
   "description": "Professional card news generator — 7 expert agents, free composition, Playwright capture, dynamic themes",
   "skills": "./skills/"
 }

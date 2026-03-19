@@ -3,3 +3,4 @@ output/
 .DS_Store
 *.log
 scopi.config.json
+test-results.txt

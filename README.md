@@ -11,7 +11,7 @@
 > Turn any paper, topic, or idea into scroll-stopping social card news —
 > without the generic AI aesthetic.
 
-[![version](https://img.shields.io/badge/version-2.5.1-1B4965?style=flat-square)](https://github.com/HosungYou/scopi-cardnews/releases)
+[![version](https://img.shields.io/badge/version-2.5.2-1B4965?style=flat-square)](https://github.com/HosungYou/scopi-cardnews/releases)
 [![license](https://img.shields.io/badge/license-MIT-3FB950?style=flat-square)](LICENSE)
 [![platform](https://img.shields.io/badge/Claude_Code-plugin-D29922?style=flat-square)](https://claude.ai/code)
 
@@ -160,13 +160,14 @@ A 10-step brand identity interview captures your voice, audience, visual style, 
 
 ## Theme Presets
 
-Six production-ready themes. Specify `"preset"` in `scopi.config.json`:
+Seven production-ready themes. Specify `"preset"` in `scopi.config.json`:
 
 | Preset | Mood | Best for |
 |--------|------|---------|
 | `deep-navy` | Data journalism | Research, statistics, academic |
 | `ochre-and-ink` | Warm academic | Education, humanities |
 | `celadon-grove` | Fresh, minimal | Science, environment |
+| `forest-ink` | Natural, scholarly | Biology, environment, nature |
 | `plum-academic` | Deep, authoritative | Policy, philosophy |
 | `slate-teal` | Cool, analytical | Technology, engineering |
 | `charcoal-warm` | Editorial | Media, commentary |

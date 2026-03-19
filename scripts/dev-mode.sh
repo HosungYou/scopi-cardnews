@@ -8,8 +8,8 @@ set -e
 
 PLUGIN_NAME="scopi-cardnews"
 CACHE_BASE="$HOME/.claude/plugins/cache/$PLUGIN_NAME/$PLUGIN_NAME"
-SOURCE_DIR="/Volumes/External SSD/Projects/scopi-cardnews"
-VERSION=$(node -p "require('$SOURCE_DIR/package.json').version")
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VERSION=$(node -p "require('${SOURCE_DIR}/package.json').version")
 CACHE_DIR="$CACHE_BASE/$VERSION"
 BACKUP_DIR="$CACHE_BASE/${VERSION}.bak"
 
