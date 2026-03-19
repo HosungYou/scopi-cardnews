@@ -60,44 +60,46 @@ async function generateFromHTML(htmlSlides, opts = {}) {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
-  const page = await browser.newPage();
-  await page.setViewport({
-    width: slideWidth,
-    height: slideHeight,
-    deviceScaleFactor: retina ? 2 : 1,
-  });
-
   const pngPaths = [];
 
-  for (let i = 0; i < htmlSlides.length; i++) {
-    const slideNum = String(i + 1).padStart(2, '0');
-    const html = htmlSlides[i];
+  try {
+    const page = await browser.newPage();
+    await page.setViewport({
+      width: slideWidth,
+      height: slideHeight,
+      deviceScaleFactor: retina ? 2 : 1,
+    });
 
-    await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    for (let i = 0; i < htmlSlides.length; i++) {
+      const slideNum = String(i + 1).padStart(2, '0');
+      const html = htmlSlides[i];
 
-    // Wait for fonts to load
-    try {
-      await Promise.race([
-        page.evaluateHandle('document.fonts.ready'),
-        new Promise(r => setTimeout(r, 5000)),
-      ]);
-    } catch { /* font timeout ok */ }
-    await new Promise(r => setTimeout(r, 800));
+      await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
-    // Screenshot
-    if (formats.includes('png')) {
-      const pngPath = path.join(outDir, `slide-${slideNum}.png`);
-      await page.screenshot({
-        path: pngPath,
-        type: 'png',
-        clip: { x: 0, y: 0, width: slideWidth, height: slideHeight },
-      });
-      pngPaths.push(pngPath);
-      console.log(`   ✓ Slide ${slideNum}/${htmlSlides.length} → slide-${slideNum}.png`);
+      // Wait for fonts to load
+      try {
+        await Promise.race([
+          page.evaluate(() => document.fonts.ready),
+          new Promise(r => setTimeout(r, 5000)),
+        ]);
+      } catch { /* font timeout ok */ }
+      await new Promise(r => setTimeout(r, 800));
+
+      // Screenshot
+      if (formats.includes('png')) {
+        const pngPath = path.join(outDir, `slide-${slideNum}.png`);
+        await page.screenshot({
+          path: pngPath,
+          type: 'png',
+          clip: { x: 0, y: 0, width: slideWidth, height: slideHeight },
+        });
+        pngPaths.push(pngPath);
+        console.log(`   ✓ Slide ${slideNum}/${htmlSlides.length} → slide-${slideNum}.png`);
+      }
     }
+  } finally {
+    await browser.close();
   }
-
-  await browser.close();
 
   // Generate PDF
   let pdfPath = null;

@@ -7,6 +7,7 @@ tools:
   - Glob
   - Grep
   - Edit
+  - Write
 ---
 
 # BINNA (빈나) — Copy Surgeon

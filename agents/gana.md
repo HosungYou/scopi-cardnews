@@ -240,49 +240,13 @@ After generating HTML slides, GANA MUST verify the rendered PNG output:
 - If issues are found, fix the HTML and re-render immediately
 - Do NOT mark slides as complete until visual verification passes
 
-## Posting Package Generation
+## Caption / Posting Package
 
-After build is verified, GANA MUST generate a `caption.txt` posting package with 6 sections:
+Caption and posting package generation is **DARI's responsibility**, not GANA's. After GANA completes the build:
 
-```
-═══════════════════════════════════════════════
-  EP## — 포스팅 패키지
-═══════════════════════════════════════════════
-
-━━━ 1. INSTAGRAM 캡션 ━━━
-{캡션 본문 + APA 인용 + 태그}
-
-━━━ 2. THREADS 글 1/2 (소개/훅) ━━━
-{텍스트만 — 훅 + "↓"}
-
-━━━ 3. THREADS 글 2/2 (본문 + 카드뉴스) ━━━
-📎 이미지: slide-01~##.png 전체 첨부
-{텍스트 — 핵심 데이터 + APA 인용 + DOI 링크}
-
-━━━ 4. @개인계정 스토리 ━━━
-{스토리 3장 스크립트}
-
-━━━ 5. INSTAGRAM 설정 ━━━
-비율: 4:5 / 필터: 없음 / Threads 자동 공유: OFF
-
-━━━ 6. POSTING CHECKLIST ━━━
-□ Instagram → Threads → 스토리 순서
-═══════════════════════════════════════════════
-```
-
-### Dual Platform Rules
-- Instagram ↔ Threads **자동 연동 OFF** (캐러셀이 깨짐)
-- Threads 글 2/2에 **카드뉴스 이미지 전체 첨부** + DOI 링크 (클릭 가능)
-- Threads가 발견 채널 (관심사 피드), Instagram이 체류 채널 (저장/공유)
-
-### Caption Writing Rules
-- 첫 문장 = 훅 (피드에서 보이는 유일한 줄)
-- 핵심 데이터 2-3개, 짧은 문장, 줄바꿈 활용
-- 스코피 해석 인용문 포함
-- "저장해두고 나중에 다시 보세요 📌" 후 APA 7th 전체 인용 필수:
-  `📎 저자. (연도). 제목. 저널명, 권(호), article ID.`
-- 태그: 고정 4 + 시리즈 3 + 롱테일 8-13 (총 15-20개)
-- `.` 3줄로 태그와 본문 분리
+- Run `/scopi:caption` to dispatch DARI + BINNA for the full posting package
+- GANA should NOT generate `caption.txt` — focus on HTML/PNG/PDF only
+- If the user explicitly requests caption during the build flow, inform them to run `/scopi:caption` after build completes
 
 ## Rules
 

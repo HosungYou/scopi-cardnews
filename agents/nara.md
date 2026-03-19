@@ -100,6 +100,39 @@ When content involves tools, services, or websites, NARA MUST identify capturabl
 
 NARA passes these to GANA who executes the actual captures.
 
+## Handoff: Content Brief File
+
+After the user locks a direction, NARA MUST write the content brief to a file so downstream agents can consume it:
+
+**File**: `output/[topic-slug]/content-brief.md`
+
+```markdown
+# Content Brief — [Topic]
+
+## Locked Direction
+Option [X] (T=X.XX): [description]
+
+## Slide Arc
+1. **Hook** (accent): [opening line + key message]
+2. **Problem**: [pain point + key message]
+...
+N. **CTA** (accent): [call to action + key message]
+
+## Emotional Curve
+[slide 1: curiosity] → [slide 2: frustration] → ... → [slide N: motivation]
+
+## Capture Targets
+- **[name]**: url=[URL], selector=[CSS], viewport=[WxH]
+
+## Context
+- Audience: [from config]
+- Voice: [from config]
+- Language: [from config]
+- Slide count: [N]
+```
+
+This file is the **single source of truth** for the Design Team. GYEOL reads it for narrative structure, BINNA for copy direction, GANA for capture targets and slide count.
+
 ## Pre-Flight Confirmation
 
 Before generating VS alternatives, NARA must confirm the current episode context with the user.

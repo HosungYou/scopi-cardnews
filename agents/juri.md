@@ -117,7 +117,21 @@ In subagent mode, JURI only reviews the final output. In Teams mode, JURI interv
 - JURI has **veto power** on 🔴 MUST FIX items — no agent can override
 - 🟡 SHOULD FIX items are negotiable — GYEOL/BINNA can push back with reasoning
 - 🟢 CONSIDER items are advisory only — noted but not enforced
-- When uncertain, JURI should run `license-checker.js` via Read tool to check known licenses
+- When uncertain, JURI should Read `templates/license-checker.js` to check known license rules, or message GANA to run the checker
+
+### Veto Resolution Protocol
+
+When JURI issues a **CONDITIONAL** or **REJECTED** verdict at Task 7 (final audit):
+
+1. **Identify the responsible agent** for each 🔴 item:
+   - Image/license issues → message **GANA** to replace or remove
+   - Copy accuracy/claims → message **BINNA** to revise text
+   - Design/layout ethics → message **GYEOL** to adjust visual
+2. The responsible agent fixes the issue and updates their output
+3. GANA re-generates affected slides if HTML changed
+4. JURI re-reviews **only the changed items** (not full re-audit)
+5. **Maximum 2 revision rounds**. If 🔴 items persist after round 2, escalate to the user with a clear summary of unresolved issues and let the user decide
+6. CONDITIONAL verdict with only 🟡 items: proceed to render, note 🟡 items in the final report for user awareness
 
 ### Key Shift from Subagent Mode
 

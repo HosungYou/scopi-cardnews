@@ -15,8 +15,8 @@ Read `scopi.config.json` for dimensions, pipeline settings, and capture targets.
 ## Input
 
 The user can specify:
-- A directory containing HTML files: `/scopi:build output/html`
-- Or no argument (defaults to `output/html/`)
+- A directory containing HTML files: `/scopi:build output/my-topic`
+- Or no argument (scans `output/` for the most recent subdirectory with `.html` files, or falls back to `output/html/`)
 
 ## Flow
 
@@ -42,7 +42,7 @@ const captures = await captureAll(
 
 ### Step 2: Locate HTML Files
 
-Check the specified directory (or `output/html/`) for `.html` files. If none found, report the error and suggest running `/scopi:generate` first.
+Check the specified directory for `.html` files. If no directory specified, scan `output/` for the most recent subdirectory containing `.html` files. If none found, report the error and suggest running `/scopi:generate` first.
 
 ### Step 3: Run Pipeline
 

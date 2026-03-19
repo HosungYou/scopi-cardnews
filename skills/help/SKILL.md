@@ -9,7 +9,7 @@ user_invocable: true
 Display the following help information, adapting language based on `scopi.config.json` language setting (default to English if no config exists):
 
 ```
-SCOPI CARDNEWS v2.0 — Command Reference
+SCOPI CARDNEWS v2.5 — Command Reference
 
 SETUP & CONFIG
   /scopi:setup     Brand identity interview + dynamic theme generation

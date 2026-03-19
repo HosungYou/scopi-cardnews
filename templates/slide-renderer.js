@@ -11,6 +11,17 @@ const { createDesignSystem } = require('./design-system');
  * @param {object} opts - { cwd, pluginRoot }
  * @returns {object} All rendering functions + DESIGN reference
  */
+/** Escape HTML special characters in user content to prevent layout breakage */
+function escapeHtml(str) {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function createRenderer(opts = {}) {
   const DESIGN = createDesignSystem(opts);
   const D = DESIGN.colors;
@@ -108,7 +119,7 @@ function createRenderer(opts = {}) {
           letter-spacing: 2px; text-transform: uppercase;
           color: ${isAccent ? 'rgba(255,255,255,0.7)' : (color || D.accent)};
           font-family: ${F.heading};
-        ">${label}</span>
+        ">${escapeHtml(label)}</span>
       </div>
     `;
   }
@@ -142,7 +153,7 @@ function createRenderer(opts = {}) {
         <div style="display: flex; align-items: center; gap: 12px;">
           ${iconHTML}
           <span style="color: ${textColor}; font-size: ${DESIGN.fontSize.small}; font-weight: 600; font-family: ${F.heading};">
-            ${labelText}
+            ${escapeHtml(labelText)}
           </span>
         </div>
         <div style="display: flex; gap: 6px; align-items: center;">${dots}</div>
@@ -157,14 +168,16 @@ function createRenderer(opts = {}) {
     const fontSize = opts.fontSize || DESIGN.fontSize.code;
     const lineHeight = opts.lineHeight || '1.8';
     const lineHTML = lines.map(l => {
-      if (l.type === 'prompt') return `<div style="margin-bottom:8px;"><span style="color:${D.termPrompt};font-weight:600;">❯</span> <span style="color:${D.termText};font-weight:600;">${l.text}</span></div>`;
-      if (l.type === 'input') return `<div style="margin-bottom:4px;"><span style="color:${D.termComment};">  </span><span style="color:${D.termText};">${l.text}</span></div>`;
-      if (l.type === 'output') return `<div style="margin-bottom:4px;"><span style="color:${D.termGreen};">  ✓</span> <span style="color:${D.termYellow};font-weight:600;">${l.highlight || ''}</span> <span style="color:${D.termComment};">${l.text}</span></div>`;
-      if (l.type === 'comment') return `<div style="color:${D.termComment};margin-bottom:4px;">  # ${l.text}</div>`;
+      const t = escapeHtml(l.text);
+      const h = escapeHtml(l.highlight || '');
+      if (l.type === 'prompt') return `<div style="margin-bottom:8px;"><span style="color:${D.termPrompt};font-weight:600;">❯</span> <span style="color:${D.termText};font-weight:600;">${t}</span></div>`;
+      if (l.type === 'input') return `<div style="margin-bottom:4px;"><span style="color:${D.termComment};">  </span><span style="color:${D.termText};">${t}</span></div>`;
+      if (l.type === 'output') return `<div style="margin-bottom:4px;"><span style="color:${D.termGreen};">  ✓</span> <span style="color:${D.termYellow};font-weight:600;">${h}</span> <span style="color:${D.termComment};">${t}</span></div>`;
+      if (l.type === 'comment') return `<div style="color:${D.termComment};margin-bottom:4px;">  # ${t}</div>`;
       if (l.type === 'blank') return '<div style="height:16px;"></div>';
-      if (l.type === 'progress') return `<div style="margin-bottom:4px;"><span style="color:${D.termGreen};">  ●</span> <span style="color:${D.termText};">${l.text}</span></div>`;
+      if (l.type === 'progress') return `<div style="margin-bottom:4px;"><span style="color:${D.termGreen};">  ●</span> <span style="color:${D.termText};">${t}</span></div>`;
       if (l.type === 'divider') return `<div style="height:1px;background:${D.termHeader};margin:12px 0;"></div>`;
-      return `<div style="color:${D.termText};margin-bottom:4px;">${l.text}</div>`;
+      return `<div style="color:${D.termText};margin-bottom:4px;">${t}</div>`;
     }).join('');
 
     const height = opts.height || null;
@@ -190,7 +203,7 @@ function createRenderer(opts = {}) {
           <div style="width:16px;height:16px;border-radius:50%;background:${D.termDotRed};"></div>
           <div style="width:16px;height:16px;border-radius:50%;background:${D.termDotYellow};"></div>
           <div style="width:16px;height:16px;border-radius:50%;background:${D.termDotGreen};"></div>
-          <span style="color:${D.termComment};font-size:24px;margin-left:10px;font-family:${F.code};">${title}</span>
+          <span style="color:${D.termComment};font-size:24px;margin-left:10px;font-family:${F.code};">${escapeHtml(title)}</span>
         </div>
         <div style="
           padding: 32px 36px;
@@ -578,14 +591,14 @@ function createRenderer(opts = {}) {
             color: ${opts.labelColor || D.textPrimary};
             font-family: ${F.heading};
             line-height: ${labelLH};
-          ">${item.label}</span>
+          ">${escapeHtml(item.label)}</span>
           <span style="
             font-size: ${opts.valueSize || '38px'};
             font-weight: 800;
             color: ${item.color || D.accent};
             font-family: ${F.heading};
             line-height: ${labelLH};
-          ">${item.value}%</span>
+          ">${escapeHtml(String(item.value))}%</span>
         </div>
         <div style="
           width: 100%; height: ${opts.barHeight || '16px'};
@@ -636,4 +649,4 @@ function createRenderer(opts = {}) {
   };
 }
 
-module.exports = { createRenderer };
+module.exports = { createRenderer, escapeHtml };

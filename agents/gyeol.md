@@ -274,7 +274,7 @@ When designing visual direction, you MUST:
 - **Quote slides**: NEVER — typography carries the message
 
 ### Image Selection Criteria
-1. **License**: Only CC0, CC-BY, Unsplash, or Pexels. ALWAYS run `license-checker.js`
+1. **License**: Only CC0, CC-BY, Unsplash, or Pexels. Message JURI for license verification, or message GANA to run `license-checker.js`
 2. **Relevance**: Must directly relate to content (no generic "technology" images)
 3. **Composition**: Prefer images with natural negative space for text overlay
 4. **Tone**: Match the theme mood (academic=warm, tech=cool, professional=neutral)

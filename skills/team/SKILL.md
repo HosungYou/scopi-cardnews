@@ -13,7 +13,7 @@ This document defines the inter-agent communication protocols, task dependencies
 ```
 /scopi:generate (Sequential Subagents)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-NARA → User → BINNA → GANA → GYEOL → JURI → MARU
+NARA → User → BINNA → GYEOL → GANA → JURI → MARU
   ↓       ↓       ↓       ↓       ↓       ↓
 (each reports back to main, no inter-agent talk)
 
@@ -48,6 +48,8 @@ This phase remains a subagent call because it requires user interaction.
 4. NARA produces the full slide arc with emotional curve
 
 This is identical to `/scopi:generate` Phase 1-2.
+
+**Handoff artifact**: NARA writes `output/[topic-slug]/content-brief.md` — this is the single source of truth for the Design Team. All agents read this file, not conversation context.
 
 ---
 
@@ -121,12 +123,27 @@ Task 7: [JURI] Final ethics audit
   Input: Generated slides.js HTML
   Output: Final APPROVED/CONDITIONAL/REJECTED
   Blocked by: Task 6
+  → If CONDITIONAL/REJECTED: trigger Veto Resolution (see below)
 
 Task 8: [MARU] Final empathy test
   Input: Generated slides.js content
   Output: Empathy scores + engagement prediction
   Blocked by: Task 6
 ```
+
+### Veto Resolution Protocol (after Task 7)
+
+If JURI's Task 7 verdict is **CONDITIONAL** (has 🔴 items) or **REJECTED**:
+
+1. JURI messages the responsible agent per issue:
+   - Image/license → **GANA** replaces or removes
+   - Copy claims → **BINNA** revises text
+   - Design ethics → **GYEOL** adjusts visual
+2. Responsible agent fixes and updates output
+3. If HTML changed → GANA re-generates affected slides
+4. JURI re-reviews **only changed items** (not full re-audit)
+5. **Max 2 revision rounds** — if 🔴 items persist, escalate to user
+6. CONDITIONAL with only 🟡 items → proceed, note in final report
 
 ### Inter-Agent Communication Protocols
 

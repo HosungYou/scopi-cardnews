@@ -34,9 +34,11 @@ try {
         // Wrap puppeteer browser to match playwright API subset
         const origNewPage = browser.newPage.bind(browser);
         browser.newContext = async (ctxOpts) => {
+          const pages = [];
           return {
             newPage: async () => {
               const page = await origNewPage();
+              pages.push(page);
               if (ctxOpts?.viewport) {
                 await page.setViewport({
                   width: ctxOpts.viewport.width,
@@ -48,7 +50,11 @@ try {
               page.waitForTimeout = (ms) => new Promise(r => setTimeout(r, ms));
               return page;
             },
-            close: async () => { /* no-op for puppeteer, pages close individually */ },
+            close: async () => {
+              for (const p of pages) {
+                try { await p.close(); } catch { /* already closed */ }
+              }
+            },
           };
         };
         return browser;
@@ -165,12 +171,14 @@ async function captureAll(targets, opts = {}) {
   const browser = await chromium.launch({ headless: true });
   const results = new Map();
 
-  for (const target of targets) {
-    const pngPath = await captureOne(browser, { ...target, outDir });
-    if (pngPath) results.set(target.name, pngPath);
+  try {
+    for (const target of targets) {
+      const pngPath = await captureOne(browser, { ...target, outDir });
+      if (pngPath) results.set(target.name, pngPath);
+    }
+  } finally {
+    await browser.close();
   }
-
-  await browser.close();
   console.log(`\n   ✅ Captured ${results.size}/${targets.length} screenshots.\n`);
   return results;
 }
