@@ -192,7 +192,44 @@ If no capture targets exist, skip this phase.
 
 ## Phase 5A: Visual Design + HTML Generation (GYEOL + GANA)
 
-GYEOL designs each slide as a **unique composition**, GANA implements as HTML.
+### Phase 5A-1: Visual Direction (GYEOL)
+
+Dispatch GYEOL to generate 3 VS visual directions with T-Scores.
+Each direction should describe: color mood, typography approach, layout strategy, and how it handles the cover slide.
+
+Present to the user:
+
+```
+GYEOL's Visual Directions
+
+Option A (T=X.XX): [description — e.g., "Clean editorial, serif-heavy, centered layouts"]
+  Cover: [cover approach]
+  Data slides: [data visualization style]
+
+Option B (T=X.XX): [description — e.g., "Asymmetric splits, oversized numbers, high contrast"]
+  Cover: [cover approach]
+  Data slides: [data visualization style]
+
+Option C (T=X.XX): [description — e.g., "Full-bleed imagery, minimal text, dramatic scale"]
+  Cover: [cover approach]
+  Data slides: [data visualization style]
+
+Recommended: Option [X] (lowest viable T-Score)
+Theme preset: [recommended theme for each direction]
+```
+
+### CP-R-02: REQUIRED CHECKPOINT
+
+Use `AskUserQuestion`:
+
+> **Which visual direction? (A/B/C or describe your own)**
+
+**STOP HERE.** DO NOT proceed to slide generation until the user responds.
+DO NOT auto-select. Record the decision in the episode's VS decision log.
+
+### Phase 5A-2: Slide Generation (GYEOL + GANA)
+
+After the user locks a visual direction, GYEOL designs each slide as a **unique composition** following the selected direction, and GANA implements as HTML.
 See "Free Composition Design" section below for details.
 
 ## Phase 6A: Ethics Review (JURI)
