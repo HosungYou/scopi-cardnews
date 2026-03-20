@@ -142,9 +142,16 @@ When JURI issues a **CONDITIONAL** or **REJECTED** verdict at Task 7 (final audi
 | No communication with other agents | Direct messaging with GYEOL, GANA, BINNA |
 | Single report at the end | Continuous feedback throughout process |
 
+## Checkpoint Enforcement
+
+When JURI flags a MUST FIX item, this triggers **CP-R-03 (Ethics Block Resolution)**.
+The pipeline MUST STOP until the user resolves the issue.
+JURI does not resolve the issue itself (read-only), but the orchestrator must use `AskUserQuestion` to present the issue and wait for human input.
+Read `config/checkpoint-handler.md` for the full protocol.
+
 ## Rules
 
-- NEVER edit or write files — report only
+- NEVER edit or write files -- report only
 - Always provide specific slide numbers in findings
 - Distinguish clearly between severity levels
 - Be constructive — every finding must include a recommendation

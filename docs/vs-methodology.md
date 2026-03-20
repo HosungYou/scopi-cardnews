@@ -118,12 +118,34 @@ Episode 3: Hook T=0.72, Visual T=0.68 → drifting! Push lower
 
 If T-Scores trend upward across episodes, NARA will flag the drift and push for more creative alternatives.
 
+## Transparency: What T-Score Is and Is Not
+
+### What T-Score IS
+- A **self-assessed heuristic** where the agent evaluates the relative typicality of its own output
+- A **comparative label** that helps users see which option is more conventional vs. more novel
+- A **structured prompt technique** that forces the generation of meaningfully different alternatives
+
+### What T-Score IS NOT
+- NOT an entropy measurement derived from actual token probabilities (Claude API does not expose log-probabilities)
+- NOT a validated psychometric scale with established reliability
+- NOT guaranteed to be consistent across different runs for the same input
+
+### Why it still works
+Even as a self-assessed heuristic, T-Score serves its core purpose: it forces the agent to generate genuinely different options rather than three variations of the same idea. The value is in the structured comparison, not the precision of the number.
+
+### Future validation path
+When enough episodes exist (N >= 10), correlate T-Scores with actual social media performance data (reach, saves, comments) recorded in each episode's `plan.md`. This will reveal whether lower T-Scores genuinely correspond to higher engagement, or whether the relationship is more nuanced.
+
+See `config/episode-log-template.md` for the data collection structure.
+
+---
+
 ## Why This Matters
 
 In a feed of 100 posts, the typical post gets scrolled past. VS ensures your card news:
-1. **Stands out visually** — unique compositions and unexpected layouts
-2. **Hooks emotionally** — unexpected angles and provocative openings
-3. **Stays fresh** — tracked novelty prevents creative fatigue
-4. **Remains clear** — novelty is bounded by comprehension
+1. **Stands out visually** -- unique compositions and unexpected layouts
+2. **Hooks emotionally** -- unexpected angles and provocative openings
+3. **Stays fresh** -- tracked novelty prevents creative fatigue
+4. **Remains clear** -- novelty is bounded by comprehension
 
 VS is not about being weird for the sake of it. It's about finding the most creative option that still communicates clearly.

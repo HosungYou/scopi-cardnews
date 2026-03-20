@@ -2,6 +2,20 @@
 
 All notable changes to Scopi Card News will be documented in this file.
 
+## [2.6.0] — 2026-03-20
+
+### Added
+- **Checkpoint enforcement system** — 3 REQUIRED checkpoints (CP-R-01 Content Direction, CP-R-02 Visual Direction, CP-R-03 Ethics Block) with explicit STOP rules. Pipeline cannot proceed without human input at REQUIRED checkpoints. Protocol documented in `config/checkpoint-handler.md`.
+- **Episode log template** — Structured data collection for VS validation: T-Score decision log, checkpoint audit trail, and post-publishing performance metrics. Template in `config/episode-log-template.md`.
+- **Pre-generate hook** — `hooks/pre-generate.sh` validates config and warns about T-Score drift before generation starts.
+- **VS transparency documentation** — New "What T-Score Is and Is Not" section in `docs/vs-methodology.md`. Explicitly states T-Score is a self-assessed heuristic, not an entropy measurement. Documents future validation path.
+
+### Changed
+- **NARA agent** — Now references checkpoint handler. Records direction selection decisions (T-Scores, user choice, recommendation match) in episode log.
+- **GYEOL agent** — Checkpoint enforcement for visual direction lock in Teams Mode.
+- **JURI agent** — MUST FIX flags now trigger CP-R-03, requiring explicit human resolution before pipeline continues.
+- **`/scopi:generate`** — Checkpoint protocol summary at pipeline entry. Post-generation episode log recording step added. Direction lock phase now requires explicit user selection (no auto-select).
+
 ## [2.5.2] — 2026-03-18
 
 ### Changed

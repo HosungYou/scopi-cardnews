@@ -10,6 +10,19 @@ You are running the Scopi full generation pipeline. This orchestrates expert age
 
 **This skill auto-detects Agent Teams availability and routes accordingly.** The user does NOT need to choose between modes — the system decides based on environment and content complexity.
 
+## Checkpoint Protocol
+
+**Read `config/checkpoint-handler.md` before proceeding.** This pipeline has 3 REQUIRED checkpoints (CP-R-01, CP-R-02, CP-R-03) where you MUST stop and wait for human input. Proceeding without human input at a REQUIRED checkpoint is a pipeline violation.
+
+Summary:
+- **CP-R-01**: Content direction selection (after NARA VS alternatives)
+- **CP-R-02**: Visual direction selection (Teams Mode, after GYEOL VS alternatives)
+- **CP-R-03**: Ethics block resolution (if JURI flags MUST FIX)
+
+At each REQUIRED checkpoint, use `AskUserQuestion` and DO NOT proceed until the user responds.
+
+---
+
 ## Prerequisites
 
 ### Step 1: Config check
@@ -112,15 +125,31 @@ Capture Targets:
   - ...
 ```
 
-Use AskUserQuestion:
+### CP-R-01: REQUIRED CHECKPOINT
+
+Use `AskUserQuestion`:
 
 > **Which direction? (A/B/C or describe your own)**
 
+**STOP HERE.** DO NOT proceed to Phase 2 until the user responds.
+DO NOT auto-select an option. DO NOT assume a default.
+If the user says "auto" or "you decide", respond: "I need you to choose. Which option resonates with your audience?" and wait again.
+
 ---
 
-## Phase 2: User Direction Lock
+## Phase 2: User Direction Lock + Log
 
-Lock in the chosen content direction. If user chose auto, use the lowest T-Score option.
+Lock in the chosen content direction. Record the decision:
+
+```
+VS Decision Log:
+  Content (NARA): Options A(T=X.XX) / B(T=X.XX) / C(T=X.XX)
+  Selected: [user's choice]
+  NARA recommended: [which option]
+  User followed recommendation: [yes/no]
+```
+
+Write this to the episode's `plan.md` under "## Episode Log".
 
 NARA produces the full slide arc with:
 - Slide-by-slide content (headline, body, key message)
@@ -169,7 +198,20 @@ See "Free Composition Design" section below for details.
 ## Phase 6A: Ethics Review (JURI)
 
 If JURI is active, dispatch for read-only review.
-Display report. If any MUST FIX items, pause and address them before proceeding.
+Display report.
+
+### CP-R-03: REQUIRED CHECKPOINT (if MUST FIX items exist)
+
+If JURI flags any MUST FIX items, the pipeline STOPS.
+
+Use `AskUserQuestion`:
+
+> **JURI has flagged [N] issue(s) requiring resolution.**
+> [List issues]
+> How should we proceed? ("fix" / "override [reason]" / "revise [instruction]")
+
+**STOP HERE.** DO NOT proceed to Phase 7A or final render until resolved.
+Record the decision in the episode's checkpoint log.
 
 ## Phase 7A: Empathy Test (MARU)
 
@@ -229,6 +271,15 @@ Agents message each other directly (see each agent's "Team Communication" sectio
 - **BINNA ↔ MARU**: persona reaction, tone calibration, curiosity testing
 - **GANA ↔ JURI**: image license verification
 - **GANA ↔ MARU**: content density, font readability
+
+### CP-R-02: REQUIRED CHECKPOINT (Teams Mode)
+
+After GYEOL presents 3 VS visual directions, use `AskUserQuestion`:
+
+> **Which visual direction? (A/B/C or describe your own)**
+
+**STOP HERE.** DO NOT proceed to slide generation until the user responds.
+Record the decision in the episode's VS decision log.
 
 ## Phase 4B: Render + Synthesis
 
@@ -321,6 +372,19 @@ Next steps:
 6. **Visual rhythm** — the deck has variety, contrast, and surprise
 7. **Design tokens only** — all colors/fonts from DESIGN, never hardcoded
 8. **Graceful degradation** — same quality regardless of mode, Teams just catches issues earlier
+
+## Post-Generation: Episode Log
+
+After generation completes, append the Episode Log to the episode's `plan.md`.
+Use the template from `config/episode-log-template.md`:
+
+1. **VS Decision Log**: Record all T-Scores presented, which option was selected, whether user followed NARA's recommendation
+2. **Checkpoint Log**: Record all checkpoint decisions with timestamps
+3. **Performance Data**: Leave blank (user fills in after posting)
+
+This data is required for future VS validation. Without it, the claim that "VS improves creative output" remains unverifiable.
+
+---
 
 ## Error Handling
 

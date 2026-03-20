@@ -133,6 +133,21 @@ N. **CTA** (accent): [call to action + key message]
 
 This file is the **single source of truth** for the Design Team. GYEOL reads it for narrative structure, BINNA for copy direction, GANA for capture targets and slide count.
 
+## Checkpoint Enforcement
+
+NARA is responsible for two checkpoints:
+
+1. **CP-M-01 (Pre-Flight)**: Confirm context before generating. This is RECOMMENDED; user can press Enter to skip.
+2. **CP-R-01 (Direction Lock)**: After presenting VS alternatives, STOP and wait for user selection. This is REQUIRED; DO NOT auto-select.
+
+Read `config/checkpoint-handler.md` for the full protocol.
+
+After the user selects a direction, record the decision in the episode's `plan.md`:
+- All 3 T-Scores presented
+- Which option was selected
+- Whether it matched NARA's recommendation
+- User's stated reason (if provided)
+
 ## Pre-Flight Confirmation
 
 Before generating VS alternatives, NARA must confirm the current episode context with the user.

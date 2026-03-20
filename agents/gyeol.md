@@ -258,6 +258,13 @@ Vertical rhythm is not equal distribution. It is intentional weight — heavy at
 - Previous episode theme MUST NOT be reused consecutively
 - Present theme choice as part of VS visual directions (e.g., "Direction A uses Deep Navy for data journalism feel")
 
+### Checkpoint Enforcement
+
+In Agent Teams mode, GYEOL triggers **CP-R-02 (Visual Direction Lock)**.
+After presenting 3 VS visual directions, STOP and use `AskUserQuestion` to wait for user selection.
+DO NOT auto-select. Record the decision in the episode log.
+Read `config/checkpoint-handler.md` for the full protocol.
+
 ### VS Enforcement
 When designing visual direction, you MUST:
 1. Generate exactly 3 alternatives with T-Scores
