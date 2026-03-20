@@ -45,29 +45,29 @@ Scopi is different on two axes:
                     └──────┬──────┘
                            │  user locks direction
           ┌────────────────▼────────────────────┐
-          │           Design Team                │  5 agents · parallel
-          │                                      │  real-time messaging
-          │  GYEOL ◄──────────────► JURI         │
-          │  Visual Architect       Ethics        │
-          │  VS: 3 directions       License &     │
-          │  T-scored               copyright     │
-          │       ▲                     ▲         │
-          │       │                     │         │
-          │  BINNA ◄──────────────► MARU          │
-          │  Copy Surgeon           Empathy        │
-          │  Hook, tone, CTA        Audience       │
-          │                         scoring        │
-          │              ▼                         │
-          │            GANA                        │
-          │       Slide Engineer                   │
-          │    HTML/CSS · PNG · PDF                │
-          └──────────────────────────────────────  ┘
+          │           Design Team               │  5 agents · parallel
+          │                                     │  real-time messaging
+          │  GYEOL ◄──────────────► JURI        │
+          │  Visual Architect       Ethics      │
+          │  VS: 3 directions       License &   │
+          │  T-scored               copyright   │
+          │       ▲                     ▲       │
+          │       │                     │       │
+          │  BINNA ◄──────────────► MARU        │
+          │  Copy Surgeon           Empathy     │
+          │  Hook, tone, CTA        Audience    │
+          │                         scoring     │
+          │              ▼                      │
+          │            GANA                     │
+          │       Slide Engineer                │
+          │    HTML/CSS · PNG · PDF             │
+          └─────────────────────────────────────┘
                          │
               ┌──────────▼──────────┐
-              │  8 PNG slides        │
-              │  caption.txt         │
-              │  Posting package     │
-              └──────────────────────┘
+              │  8 PNG slides       │
+              │  caption.txt        │
+              │  Posting package    │
+              └─────────────────────┘
 ```
 
 **JURI** flags copyright issues in real-time. **MARU** scores audience resonance mid-design. **BINNA** negotiates copy constraints with the layout. Agents push back on each other — the output reflects that tension.
